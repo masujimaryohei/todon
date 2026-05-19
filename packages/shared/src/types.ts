@@ -75,6 +75,63 @@ export type User = {
   createdAt: string;
 };
 
+export type TeamRole = 'owner' | 'admin' | 'member';
+
+export type Team = {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+  memberCount?: number;
+  myRole?: TeamRole;
+};
+
+export type TeamMember = {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: TeamRole;
+  createdAt: string;
+  user?: User;
+};
+
+export type TeamInvite = {
+  id: string;
+  teamId: string;
+  email: string;
+  token: string;
+  status: 'pending' | 'accepted' | 'revoked';
+  createdAt: string;
+  teamName?: string;
+};
+
+export type TaskComment = {
+  id: string;
+  taskId: string;
+  userId: string;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: User;
+};
+
+export type TaskActivityLog = {
+  id: string;
+  taskId: string;
+  userId: string;
+  action: string;
+  before?: string | null;
+  after?: string | null;
+  createdAt: string;
+  user?: User;
+};
+
+export type TaskWithPeople = Task & {
+  owner?: User | null;
+  assignee?: User | null;
+};
+
 export type AuthResponse = {
   user: User;
   token: string;
@@ -88,6 +145,7 @@ export type DashboardPayload = {
   stalledPending: Task[];
   highPriorityOpen: Task[];
   todayFlexible: FlexibleTaskView[];
+  myTeamTasks: TaskWithPeople[];
   capacity: CapacityLevel;
   aiSuggestion: string;
   notificationCandidates: Task[];
@@ -95,7 +153,8 @@ export type DashboardPayload = {
 
 export type WeeklyReview = {
   id: string;
-  userId: string;
+  userId?: string | null;
+  teamId?: string | null;
   type: 'personal' | 'team';
   weekStart: string;
   weekEnd: string;

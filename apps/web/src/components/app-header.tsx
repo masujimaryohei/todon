@@ -5,6 +5,7 @@ import { LogoutButton } from '@/components/logout-button';
 const nav = [
   { href: '/dashboard', label: 'ダッシュボード' },
   { href: '/tasks', label: '個人タスク' },
+  { href: '/teams', label: 'チーム' },
   { href: '/reviews', label: '振り返り' },
   { href: '/archive', label: 'アーカイブ' },
 ];

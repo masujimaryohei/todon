@@ -62,6 +62,9 @@ const taskBodySchema = z.object({
   urgency: z.enum(['low', 'medium', 'high']).optional(),
   weight: z.enum(['light', 'normal', 'heavy']).optional(),
   categoryId: z.string().cuid().optional().nullable(),
+  scope: z.enum(['personal', 'team']).optional(),
+  teamId: z.string().cuid().optional().nullable(),
+  assigneeId: z.string().cuid().optional().nullable(),
   ...repeatFields,
 });
 
@@ -91,4 +94,24 @@ export const updateSubtaskSchema = z.object({
   title: z.string().min(1).max(256).optional(),
   completed: z.boolean().optional(),
   order: z.number().int().optional(),
+});
+
+export const createTeamSchema = z.object({
+  name: z.string().min(1).max(64),
+});
+
+export const inviteMemberSchema = z.object({
+  email: z.string().email(),
+});
+
+export const updateMemberRoleSchema = z.object({
+  role: z.enum(['admin', 'member']),
+});
+
+export const createCommentSchema = z.object({
+  body: z.string().min(1).max(5000),
+});
+
+export const acceptInviteSchema = z.object({
+  token: z.string().min(8),
 });

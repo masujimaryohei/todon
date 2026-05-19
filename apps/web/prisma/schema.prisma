@@ -8,22 +8,68 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  name         String?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  tasks        Task[]
-  categories   Category[]
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  tasks         Task[]
+  categories    Category[]
   dayCapacities DayCapacity[]
   weeklyReviews WeeklyReview[]
+  ownedTeams    Team[]         @relation("TeamOwner")
+  memberships   TeamMember[]
+  comments      TaskComment[]
+  activities    TaskActivityLog[]
+  invitesSent   TeamInvite[]   @relation("InviteSender")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User     @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  TeamMember[]
+  invites  TeamInvite[]
+  tasks    Task[]
+  reviews  WeeklyReview[]
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // owner | admin | member
+  createdAt DateTime @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model TeamInvite {
+  id          String   @id @default(cuid())
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  email       String
+  token       String   @unique
+  invitedById String
+  invitedBy   User     @relation("InviteSender", fields: [invitedById], references: [id], onDelete: Cascade)
+  status      String   @default("pending") // pending | accepted | revoked
+  createdAt   DateTime @default(now())
+
+  @@unique([teamId, email])
 }
 
 model Category {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId    String?
   name      String
   color     String?
   createdAt DateTime @default(now())
@@ -34,36 +80,36 @@ model Category {
 }
 
 model Task {
-  id        String @id @default(cuid())
-  userId    String
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
   description String?
 
-  scope    String @default("personal") // personal | team (team is reserved for future)
-  teamId   String?
-  ownerId  String // mirrors userId for personal tasks
+  scope      String  @default("personal") // personal | team
+  teamId     String?
+  team       Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  ownerId    String
   assigneeId String?
 
-  status String // todo doing done pending canceled
-
-  dueType String @default("none") // none datetime anytime flexible
+  status  String
+  dueType String  @default("none")
   dueAt   DateTime?
 
-  repeatType           String @default("none") // none fixed flexible
-  repeatIntervalDays   Int?
-  flexibleMinDays      Int?
-  flexibleMaxDays      Int?
-  flexibleSkipCount    Int      @default(0)
-  lastCompletedAt      DateTime?
+  repeatType         String @default("none")
+  repeatIntervalDays Int?
+  flexibleMinDays    Int?
+  flexibleMaxDays    Int?
+  flexibleSkipCount  Int       @default(0)
+  lastCompletedAt    DateTime?
 
-  importance String @default("medium") // low medium high
+  importance String @default("medium")
   urgency    String @default("medium")
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  weight String @default("normal") // light normal heavy
+  weight String @default("normal")
 
   archivedAt DateTime?
   deletedAt  DateTime?
@@ -71,7 +117,9 @@ model Task {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  subtasks SubTask[]
+  subtasks   SubTask[]
+  comments   TaskComment[]
+  activities TaskActivityLog[]
 }
 
 model SubTask {
@@ -85,30 +133,53 @@ model SubTask {
   updatedAt DateTime @updatedAt
 }
 
-/// 今日のキャパシティ（日付は UTC 日付文字列 YYYY-MM-DD）
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TaskActivityLog {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  before    String?
+  after     String?
+  createdAt DateTime @default(now())
+}
+
 model DayCapacity {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   day       String
-  level     String   // relaxed | normal | busy | overload
+  level     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([userId, day])
 }
 
-/// 週次振り返り（v1.5 はルールベース生成。将来 AI に差し替え）
 model WeeklyReview {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type            String   @default("personal")
-  weekStart       DateTime
-  weekEnd         DateTime
-  summary         String
-  insightsJson    String
+  id                  String   @id @default(cuid())
+  userId              String?
+  user                User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamId              String?
+  team                Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  type                String   @default("personal")
+  weekStart           DateTime
+  weekEnd             DateTime
+  summary             String
+  insightsJson        String
   recommendationsJson String
-  rawStatsJson    String
-  createdAt       DateTime @default(now())
+  rawStatsJson        String
+  createdAt           DateTime @default(now())
 }

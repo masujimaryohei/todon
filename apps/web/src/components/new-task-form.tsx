@@ -1,17 +1,20 @@
 'use client';
 
-import type { Category, RepeatType, TaskWeight } from '@todon/shared';
+import type { Category, RepeatType, TaskWeight, Team } from '@todon/shared';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { RepeatFields } from '@/components/repeat-fields';
 
 type Props = {
   categories: Category[];
+  teams: Team[];
 };
 
-export function NewTaskForm({ categories }: Props) {
+export function NewTaskForm({ categories, teams }: Props) {
+  const searchParams = useSearchParams();
+  const initialTeamId = searchParams.get('teamId') ?? '';
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -25,8 +28,44 @@ export function NewTaskForm({ categories }: Props) {
   const [repeatIntervalDays, setRepeatIntervalDays] = useState(7);
   const [flexibleMinDays, setFlexibleMinDays] = useState(2);
   const [flexibleMaxDays, setFlexibleMaxDays] = useState(4);
+  const [scope, setScope] = useState<'personal' | 'team'>(initialTeamId ? 'team' : 'personal');
+  const [teamId, setTeamId] = useState(initialTeamId);
+  const [assigneeId, setAssigneeId] = useState('');
+  const [teamMembers, setTeamMembers] = useState<{ userId: string; label: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (scope !== 'team' || !teamId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void fetch(`/api/teams/${teamId}/members`, { credentials: 'include' })
+      .then((res) => res.json())
+      .then((rows: { userId: string; user?: { name?: string | null; email?: string } }[]) => {
+        if (cancelled) {
+          return;
+        }
+
+        setTeamMembers(
+          rows.map((m) => ({
+            userId: m.userId,
+            label: m.user?.name ?? m.user?.email ?? m.userId,
+          })),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTeamMembers([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [scope, teamId]);
 
   useEffect(() => {
     const trimmed = title.trim();
@@ -74,6 +113,8 @@ export function NewTaskForm({ categories }: Props) {
           importance,
           urgency,
           weight,
+          scope,
+          ...(scope === 'team' ? { teamId, assigneeId: assigneeId || undefined } : {}),
           categoryId: categoryId || undefined,
           dueType: repeatType === 'flexible' ? 'flexible' : duePayload.dueType,
           ...(duePayload.dueAt ? { dueAt: duePayload.dueAt } : {}),
@@ -122,6 +163,65 @@ export function NewTaskForm({ categories }: Props) {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm text-slate-200">スコープ</label>
+          <select
+            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            value={scope}
+            onChange={(e) => {
+              const next = e.target.value as 'personal' | 'team';
+              setScope(next);
+              if (next !== 'team') {
+                setTeamId('');
+                setAssigneeId('');
+                setTeamMembers([]);
+              }
+            }}
+          >
+            <option value="personal">個人</option>
+            <option value="team">チーム</option>
+          </select>
+        </div>
+
+        {scope === 'team' ? (
+          <>
+            <div className="space-y-2">
+              <label className="text-sm text-slate-200">チーム</label>
+              <select
+                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+                value={teamId}
+                onChange={(e) => {
+                  setTeamId(e.target.value);
+                  setAssigneeId('');
+                }}
+                required
+              >
+                <option value="">選択してください</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-slate-200">担当者（任意）</label>
+              <select
+                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+                value={assigneeId}
+                onChange={(e) => setAssigneeId(e.target.value)}
+              >
+                <option value="">未割当</option>
+                {teamMembers.map((m) => (
+                  <option key={m.userId} value={m.userId}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        ) : null}
+
         <div className="space-y-2">
           <label className="text-sm text-slate-200">期日タイプ</label>
           <select

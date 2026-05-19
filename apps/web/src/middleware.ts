@@ -13,7 +13,11 @@ export async function middleware(req: NextRequest) {
     pathname === '/archive' ||
     pathname.startsWith('/archive/') ||
     pathname === '/reviews' ||
-    pathname.startsWith('/reviews/');
+    pathname.startsWith('/reviews/') ||
+    pathname === '/teams' ||
+    pathname.startsWith('/teams/') ||
+    pathname === '/join' ||
+    pathname.startsWith('/join/');
 
   if (!isProtected) {
     return NextResponse.next();
@@ -42,5 +46,9 @@ export const config = {
     '/archive/:path*',
     '/reviews',
     '/reviews/:path*',
+    '/teams',
+    '/teams/:path*',
+    '/join',
+    '/join/:path*',
   ],
 };

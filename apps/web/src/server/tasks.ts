@@ -1,122 +1,41 @@
-import type { Task as PrismaTask } from '@prisma/client';
-import type { RepeatType } from '@todon/shared';
+import type { RepeatType, TaskWithPeople } from '@todon/shared';
 
 import { BadRequestError, ForbiddenError, NotFoundError } from '@/lib/http';
 import { mapSubTask, mapTask } from '@/lib/mappers';
 import { prisma } from '@/lib/prisma';
 
-const taskInclude = {
-  category: true,
-  subtasks: {
-    orderBy: { sortOrder: 'asc' as const },
-  },
-} as const;
+import { logTaskActivity } from './activity';
+import { enrichTaskWithPeople, fetchTaskDetail, mapTaskRows, taskInclude } from './task-queries';
+import { buildRepeatCompletionPatch, repeatFieldsFromInput } from './tasks-shared';
+import { requireTaskAccess, requireTaskEdit } from './team-access';
+import { createTeamTask } from './team-tasks';
 
-async function fetchTaskOwned(userId: string, taskId: string) {
-  const task = await prisma.task.findFirst({
-    where: {
-      id: taskId,
-      userId,
-      deletedAt: null,
-    },
-    include: taskInclude,
-  });
-
-  return task ? mapTask(task) : null;
-}
+export { buildRepeatCompletionPatch,repeatFieldsFromInput };
 
 export async function listTasks(userId: string, archived: boolean) {
   const rows = await prisma.task.findMany({
     where: {
       userId,
+      scope: 'personal',
       deletedAt: null,
       ...(archived ? { archivedAt: { not: null } } : { archivedAt: null }),
     },
     orderBy: [{ dueAt: 'asc' }, { createdAt: 'desc' }],
     include: taskInclude,
   });
-  return rows.map((row) => mapTask(row));
+
+  return mapTaskRows(rows);
 }
 
-export async function getTask(userId: string, taskId: string) {
-  const task = await fetchTaskOwned(userId, taskId);
-  if (!task) {
+export async function getTask(userId: string, taskId: string): Promise<TaskWithPeople> {
+  await requireTaskAccess(userId, taskId);
+
+  const row = await fetchTaskDetail(taskId);
+  if (!row) {
     throw new NotFoundError('タスクが見つかりません');
   }
 
-  return task;
-}
-
-function repeatFieldsFromInput(input: {
-  repeatType?: RepeatType;
-  repeatIntervalDays?: number | null;
-  flexibleMinDays?: number | null;
-  flexibleMaxDays?: number | null;
-  dueType?: string;
-}) {
-  const repeatType = input.repeatType ?? 'none';
-
-  if (repeatType === 'fixed') {
-    return {
-      repeatType,
-      repeatIntervalDays: input.repeatIntervalDays ?? 7,
-      flexibleMinDays: null,
-      flexibleMaxDays: null,
-      dueType: input.dueType ?? 'datetime',
-    };
-  }
-
-  if (repeatType === 'flexible') {
-    return {
-      repeatType,
-      repeatIntervalDays: null,
-      flexibleMinDays: input.flexibleMinDays ?? 2,
-      flexibleMaxDays: input.flexibleMaxDays ?? 4,
-      dueType: 'flexible',
-    };
-  }
-
-  return {
-    repeatType: 'none' as const,
-    repeatIntervalDays: null,
-    flexibleMinDays: null,
-    flexibleMaxDays: null,
-  };
-}
-
-function buildRepeatCompletionPatch(existing: PrismaTask) {
-  const now = new Date();
-
-  if (existing.repeatType === 'none') {
-    return { lastCompletedAt: now, status: 'done' };
-  }
-
-  const base = {
-    lastCompletedAt: now,
-    status: 'todo',
-    flexibleSkipCount: 0,
-  };
-
-  if (existing.repeatType === 'fixed') {
-    const days = existing.repeatIntervalDays ?? 7;
-    const nextDue = new Date(now);
-    nextDue.setUTCDate(nextDue.getUTCDate() + days);
-
-    return {
-      ...base,
-      dueType: 'datetime',
-      dueAt: nextDue,
-    };
-  }
-
-  if (existing.repeatType === 'flexible') {
-    return {
-      ...base,
-      dueType: 'flexible',
-    };
-  }
-
-  return { lastCompletedAt: now };
+  return enrichTaskWithPeople(row);
 }
 
 async function getActiveTask(userId: string, taskId: string) {
@@ -144,8 +63,19 @@ export async function createTask(
     repeatIntervalDays?: number | null;
     flexibleMinDays?: number | null;
     flexibleMaxDays?: number | null;
+    scope?: 'personal' | 'team';
+    teamId?: string | null;
+    assigneeId?: string | null;
   },
 ) {
+  if (input.scope === 'team') {
+    if (!input.teamId) {
+      throw new BadRequestError('チームタスクには teamId が必要です');
+    }
+
+    return createTeamTask(userId, input.teamId, input);
+  }
+
   const repeat = repeatFieldsFromInput(input);
 
   if (input.categoryId) {
@@ -195,6 +125,7 @@ export async function updateTask(
     urgency: string;
     weight: string;
     categoryId: string | null;
+    assigneeId: string | null;
     repeatType?: string;
     repeatIntervalDays?: number | null;
     flexibleMinDays?: number | null;
@@ -203,16 +134,24 @@ export async function updateTask(
     deletedAt?: Date | null;
   }>,
 ) {
-  const existing = await prisma.task.findFirst({ where: { id: taskId, userId, deletedAt: null } });
-  if (!existing) {
-    throw new NotFoundError('タスクが見つかりません');
-  }
+  const existing = await requireTaskEdit(userId, taskId);
 
   if (existing.archivedAt) {
     throw new BadRequestError('アーカイブ済みのタスクは編集できません');
   }
 
-  if (patch.categoryId) {
+  if (patch.assigneeId !== undefined && existing.scope === 'team' && existing.teamId) {
+    if (patch.assigneeId) {
+      const member = await prisma.teamMember.findUnique({
+        where: { teamId_userId: { teamId: existing.teamId, userId: patch.assigneeId } },
+      });
+      if (!member) {
+        throw new BadRequestError('担当者はチームメンバーから選んでください');
+      }
+    }
+  }
+
+  if (patch.categoryId && existing.scope === 'personal') {
     const category = await prisma.category.findFirst({
       where: { id: patch.categoryId, userId },
     });
@@ -221,8 +160,7 @@ export async function updateTask(
     }
   }
 
-  const completing =
-    patch.status === 'done' && existing.status !== 'done';
+  const completing = patch.status === 'done' && existing.status !== 'done';
 
   const repeatPatch =
     patch.repeatType !== undefined
@@ -247,6 +185,7 @@ export async function updateTask(
       ...(patch.urgency !== undefined ? { urgency: patch.urgency } : {}),
       ...(patch.weight !== undefined ? { weight: patch.weight } : {}),
       ...(patch.categoryId !== undefined ? { categoryId: patch.categoryId } : {}),
+      ...(patch.assigneeId !== undefined ? { assigneeId: patch.assigneeId } : {}),
       ...(patch.archivedAt !== undefined ? { archivedAt: patch.archivedAt } : {}),
       ...(patch.deletedAt !== undefined ? { deletedAt: patch.deletedAt } : {}),
       ...(repeatPatch
@@ -262,7 +201,27 @@ export async function updateTask(
     include: taskInclude,
   });
 
-  return mapTask(row);
+  if (patch.status !== undefined && patch.status !== existing.status) {
+    await logTaskActivity({
+      taskId,
+      userId,
+      action: 'status_changed',
+      before: existing.status,
+      after: patch.status,
+    });
+  }
+
+  if (patch.assigneeId !== undefined && patch.assigneeId !== existing.assigneeId) {
+    await logTaskActivity({
+      taskId,
+      userId,
+      action: 'assignee_changed',
+      before: existing.assigneeId,
+      after: patch.assigneeId,
+    });
+  }
+
+  return enrichTaskWithPeople(row);
 }
 
 export async function archiveTask(userId: string, taskId: string) {
@@ -274,17 +233,13 @@ export async function archiveTask(userId: string, taskId: string) {
     include: taskInclude,
   });
 
-  return mapTask(row);
+  await logTaskActivity({ taskId, userId, action: 'archived' });
+
+  return enrichTaskWithPeople(row);
 }
 
 export async function deleteArchivedTask(userId: string, taskId: string) {
-  const task = await prisma.task.findFirst({
-    where: { id: taskId, userId, deletedAt: null },
-  });
-
-  if (!task) {
-    throw new NotFoundError('タスクが見つかりません');
-  }
+  const task = await requireTaskEdit(userId, taskId);
 
   if (!task.archivedAt) {
     throw new BadRequestError('アーカイブ済みのタスクのみ削除できます');
@@ -296,11 +251,14 @@ export async function deleteArchivedTask(userId: string, taskId: string) {
     include: taskInclude,
   });
 
-  return mapTask(row);
+  await logTaskActivity({ taskId, userId, action: 'deleted' });
+
+  return enrichTaskWithPeople(row);
 }
 
 export async function createSubtask(userId: string, taskId: string, title: string) {
   await getActiveTask(userId, taskId);
+  await requireTaskEdit(userId, taskId);
 
   const last = await prisma.subTask.findFirst({
     where: { taskId },
@@ -317,6 +275,8 @@ export async function createSubtask(userId: string, taskId: string, title: strin
     },
   });
 
+  await logTaskActivity({ taskId, userId, action: 'subtask_added', after: title });
+
   return mapSubTask(row);
 }
 
@@ -327,14 +287,14 @@ export async function updateSubtask(
 ) {
   const subtask = await prisma.subTask.findFirst({
     where: { id: subtaskId },
-    include: {
-      task: true,
-    },
+    include: { task: true },
   });
 
-  if (!subtask || subtask.task.userId !== userId || subtask.task.deletedAt) {
+  if (!subtask || subtask.task.deletedAt) {
     throw new NotFoundError('サブタスクが見つかりません');
   }
+
+  await requireTaskEdit(userId, subtask.taskId);
 
   if (subtask.task.archivedAt) {
     throw new BadRequestError('アーカイブ済みタスクは編集できません');
@@ -354,13 +314,7 @@ export async function updateSubtask(
 }
 
 export async function skipFlexibleTask(userId: string, taskId: string) {
-  const existing = await prisma.task.findFirst({
-    where: { id: taskId, userId, deletedAt: null, archivedAt: null },
-  });
-
-  if (!existing) {
-    throw new NotFoundError('タスクが見つかりません');
-  }
+  const existing = await requireTaskEdit(userId, taskId);
 
   if (existing.repeatType !== 'flexible') {
     throw new BadRequestError('だいたいリピートのタスクのみスキップできます');
@@ -375,5 +329,5 @@ export async function skipFlexibleTask(userId: string, taskId: string) {
     include: taskInclude,
   });
 
-  return mapTask(row);
+  return enrichTaskWithPeople(row);
 }

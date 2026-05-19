@@ -1,14 +1,16 @@
 'use client';
 
-import type { RepeatType, SubTask, Task } from '@todon/shared';
+import type { RepeatType, SubTask, Task, TaskWithPeople, TeamMember } from '@todon/shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 import { RepeatFields } from '@/components/repeat-fields';
+import { TaskCollaboration } from '@/components/task-collaboration';
 
 type Props = {
-  task: Task;
+  task: TaskWithPeople;
+  members?: TeamMember[];
 };
 
 const statusLabels: Record<Task['status'], string> = {
@@ -19,7 +21,7 @@ const statusLabels: Record<Task['status'], string> = {
   canceled: '中止',
 };
 
-export function TaskDetailClient({ task: initial }: Props) {
+export function TaskDetailClient({ task: initial, members = [] }: Props) {
   const router = useRouter();
   const [task, setTask] = useState(initial);
   const [title, setTitle] = useState(initial.title);
@@ -240,9 +242,16 @@ export function TaskDetailClient({ task: initial }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <Link href="/tasks" className="text-sm text-emerald-300 hover:underline">
-          ← 一覧へ
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/tasks" className="text-sm text-emerald-300 hover:underline">
+            ← 一覧へ
+          </Link>
+          {initial.scope === 'team' && initial.teamId ? (
+            <Link href={`/teams/${initial.teamId}`} className="text-sm text-indigo-300 hover:underline">
+              チームへ
+            </Link>
+          ) : null}
+        </div>
         {archived ? (
           <span className="rounded-full bg-amber-900/40 px-3 py-1 text-xs text-amber-200">
             アーカイブ済み
@@ -476,6 +485,8 @@ export function TaskDetailClient({ task: initial }: Props) {
           ))}
         </ul>
       </div>
+
+      <TaskCollaboration task={task} members={members} />
     </div>
   );
 }

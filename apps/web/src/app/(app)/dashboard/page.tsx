@@ -110,6 +110,29 @@ export default async function DashboardPage() {
         <p className="mt-2 text-sm leading-relaxed text-emerald-50">{data.aiSuggestion}</p>
       </section>
 
+      <Section title="担当のチームタスク" description="自分が担当している未完了タスク">
+        {data.myTeamTasks.length === 0 ? (
+          <p className="text-sm text-slate-400">担当中のチームタスクはありません</p>
+        ) : (
+          <ul className="space-y-3">
+            {data.myTeamTasks.map((task) => (
+              <li key={task.id}>
+                <Link
+                  href={`/tasks/${task.id}`}
+                  className="block rounded-lg border border-indigo-900/50 bg-indigo-950/30 px-4 py-3 hover:border-indigo-500/60"
+                >
+                  <p className="font-medium text-slate-50">{task.title}</p>
+                  <p className="text-xs text-indigo-200/80">
+                    {task.status}
+                    {task.assignee?.name ? ` / 担当: ${task.assignee.name}` : ''}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+
       <Section title="だいたいリピート（今日）" description="周期とキャパシティから算出">
         <FlexibleList tasks={data.todayFlexible} />
       </Section>

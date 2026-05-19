@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { NewTaskForm } from '@/components/new-task-form';
 import { getCurrentUserId } from '@/lib/auth/session';
 import { listCategories } from '@/server/categories';
+import { listTeamsForUser } from '@/server/teams';
 
 export default async function NewTaskPage() {
   const userId = await getCurrentUserId();
@@ -11,7 +13,7 @@ export default async function NewTaskPage() {
     redirect('/login');
   }
 
-  const categories = await listCategories(userId);
+  const [categories, teams] = await Promise.all([listCategories(userId), listTeamsForUser(userId)]);
 
   return (
     <div className="space-y-4">
@@ -24,7 +26,9 @@ export default async function NewTaskPage() {
           一覧へ戻る
         </Link>
       </div>
-      <NewTaskForm categories={categories} />
+      <Suspense fallback={<p className="text-sm text-slate-400">読み込み中…</p>}>
+        <NewTaskForm categories={categories} teams={teams} />
+      </Suspense>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 
 import { getTodayCapacity } from './capacity';
 import { pickFlexibleTasksForToday } from './flexible-tasks';
+import { listMyAssignedTeamTasks } from './team-tasks';
 
 const taskInclude = {
   category: true,
@@ -101,6 +102,8 @@ export async function buildDashboard(userId: string, nowInput = new Date()): Pro
     capacity,
   );
 
+  const myTeamTasks = await listMyAssignedTeamTasks(userId);
+
   return {
     overdue: mapRows(overdue),
     dueToday: mapRows(dueToday),
@@ -109,6 +112,7 @@ export async function buildDashboard(userId: string, nowInput = new Date()): Pro
     stalledPending: mapRows(stalledPending),
     highPriorityOpen: mapRows(highPriorityOpen),
     todayFlexible,
+    myTeamTasks,
     capacity,
     aiSuggestion,
     notificationCandidates,

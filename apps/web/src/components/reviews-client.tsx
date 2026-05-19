@@ -65,6 +65,8 @@ export function ReviewsClient({ initialReviews }: Props) {
           {reviews.map((review) => (
             <li key={review.id} className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
               <p className="text-xs text-slate-500">
+                {review.type === 'team' ? 'チーム' : '個人'}
+                {' · '}
                 {new Date(review.weekStart).toLocaleDateString('ja-JP')} 〜{' '}
                 {new Date(review.weekEnd).toLocaleDateString('ja-JP')}
               </p>

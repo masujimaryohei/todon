@@ -4,6 +4,8 @@ import type { WeeklyReview as WeeklyReviewDto } from '@todon/shared';
 import { endOfUtcWeek, startOfUtcWeek } from '@/lib/date';
 import { prisma } from '@/lib/prisma';
 
+import { listUserTeamIds, requireMembership } from './team-access';
+
 function mapReview(row: PrismaWeeklyReview): WeeklyReviewDto {
   return {
     id: row.id,
@@ -37,6 +39,7 @@ async function collectWeekStats(userId: string, weekStart: Date, weekEnd: Date):
   const tasks = await prisma.task.findMany({
     where: {
       userId,
+      scope: 'personal',
       deletedAt: null,
       createdAt: { lt: weekEnd },
     },
@@ -152,9 +155,68 @@ function buildReviewText(stats: WeekStats, prev?: WeekStats) {
   return { summary, insights, recommendations };
 }
 
-export async function listWeeklyReviews(userId: string, limit = 8) {
+async function collectTeamWeekStats(teamId: string, weekStart: Date, weekEnd: Date): Promise<WeekStats & { unassigned: number }> {
+  const tasks = await prisma.task.findMany({
+    where: {
+      teamId,
+      scope: 'team',
+      deletedAt: null,
+      createdAt: { lt: weekEnd },
+    },
+  });
+
+  const stats: WeekStats & { unassigned: number } = {
+    completed: 0,
+    open: 0,
+    pending: 0,
+    canceled: 0,
+    overdue: 0,
+    highImportanceOpen: 0,
+    heavyOpen: 0,
+    flexibleCompleted: 0,
+    flexibleSkipped: 0,
+    anytimeOpen: 0,
+    byCategory: {},
+    unassigned: 0,
+  };
+
+  const now = new Date();
+
+  for (const t of tasks) {
+    const cat = t.categoryId ?? '未分類';
+    stats.byCategory[cat] = (stats.byCategory[cat] ?? 0) + 1;
+
+    if (!t.assigneeId && ['todo', 'doing', 'pending'].includes(t.status)) {
+      stats.unassigned += 1;
+    }
+
+    if (t.status === 'done' && t.updatedAt >= weekStart && t.updatedAt < weekEnd) {
+      stats.completed += 1;
+    }
+
+    if (['todo', 'doing'].includes(t.status)) {
+      stats.open += 1;
+    }
+
+    if (t.status === 'pending') {
+      stats.pending += 1;
+    }
+
+    if (t.dueType === 'datetime' && t.dueAt && t.dueAt < now && t.status !== 'done') {
+      stats.overdue += 1;
+    }
+  }
+
+  return stats;
+}
+
+export async function listWeeklyReviews(userId: string, limit = 12) {
+  const teamIds = await listUserTeamIds(userId);
+
   const rows = await prisma.weeklyReview.findMany({
-    where: { userId },
+    where: {
+      OR: [{ userId }, ...(teamIds.length ? [{ teamId: { in: teamIds } }] : [])],
+    },
     orderBy: { weekStart: 'desc' },
     take: limit,
   });
@@ -190,6 +252,73 @@ export async function generateWeeklyReview(userId: string, now = new Date()) {
     data: {
       userId,
       type: 'personal',
+      weekStart,
+      weekEnd,
+      summary,
+      insightsJson: JSON.stringify(insights),
+      recommendationsJson: JSON.stringify(recommendations),
+      rawStatsJson: JSON.stringify({ current: stats, previous: prevStats }),
+    },
+  });
+
+  return mapReview(row);
+}
+
+export async function generateTeamWeeklyReview(userId: string, teamId: string, now = new Date()) {
+  await requireMembership(userId, teamId);
+
+  const weekStart = startOfUtcWeek(now);
+  const weekEnd = endOfUtcWeek(weekStart);
+
+  const existing = await prisma.weeklyReview.findFirst({
+    where: { teamId, weekStart, type: 'team' },
+  });
+
+  if (existing) {
+    return mapReview(existing);
+  }
+
+  const stats = await collectTeamWeekStats(teamId, weekStart, weekEnd);
+
+  const prevWeekStart = new Date(weekStart);
+  prevWeekStart.setUTCDate(prevWeekStart.getUTCDate() - 7);
+  const prevWeekEnd = new Date(weekStart);
+  const prevStats = await collectTeamWeekStats(teamId, prevWeekStart, prevWeekEnd);
+
+  const insights: string[] = [];
+  const recommendations: string[] = [];
+
+  const completedDelta = stats.completed - prevStats.completed;
+
+  if (completedDelta > 0) {
+    insights.push(`チームの完了数は先週より ${completedDelta} 件増えています。`);
+  }
+
+  if (stats.unassigned > 0) {
+    insights.push(`担当者未設定のタスクが ${stats.unassigned} 件あります。`);
+    recommendations.push('新規タスク作成時に担当者を必ず割り当てる習慣をつけると進行が速くなります。');
+  }
+
+  if (stats.pending >= 3) {
+    insights.push(`保留中のチームタスクが ${stats.pending} 件あります。`);
+    recommendations.push('保留の理由をコメントに残し、次の一手を明確にしましょう。');
+  }
+
+  if (stats.overdue > 0) {
+    insights.push(`期限切れのチームタスクが ${stats.overdue} 件あります。`);
+    recommendations.push('期限切れタスクを1件ずつ見直し、担当者と期限を再調整してください。');
+  }
+
+  if (recommendations.length === 0) {
+    recommendations.push('来週はチーム全体の未完了を朝会で5分だけ共有すると認識が揃います。');
+  }
+
+  const summary = `今週チームで ${stats.completed} 件のタスクが完了しました。未完了は ${stats.open} 件、担当者未設定は ${stats.unassigned} 件です。`;
+
+  const row = await prisma.weeklyReview.create({
+    data: {
+      teamId,
+      type: 'team',
       weekStart,
       weekEnd,
       summary,

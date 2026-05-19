@@ -1,5 +1,18 @@
 import type { CapacityLevel } from './capacity';
-import type { AuthResponse, Category, DashboardPayload, Task, User, WeeklyReview } from './types';
+import type {
+  AuthResponse,
+  Category,
+  DashboardPayload,
+  Task,
+  TaskActivityLog,
+  TaskComment,
+  TaskWithPeople,
+  Team,
+  TeamInvite,
+  TeamMember,
+  User,
+  WeeklyReview,
+} from './types';
 
 export type ApiClientOptions = {
   baseUrl: string;
@@ -172,5 +185,69 @@ export class TodoNApiClient {
 
   generateWeeklyReview() {
     return this.request<WeeklyReview>('/api/reviews', { method: 'POST' });
+  }
+
+  listTeams() {
+    return this.request<Team[]>('/api/teams');
+  }
+
+  createTeam(body: { name: string }) {
+    return this.request<Team>('/api/teams', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  getTeam(id: string) {
+    return this.request<Team>(`/api/teams/${id}`);
+  }
+
+  listTeamMembers(teamId: string) {
+    return this.request<TeamMember[]>(`/api/teams/${teamId}/members`);
+  }
+
+  inviteTeamMember(teamId: string, body: { email: string }) {
+    return this.request<{ type: string; member?: TeamMember; invite?: TeamInvite }>(
+      `/api/teams/${teamId}/members`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+    );
+  }
+
+  listTeamTasks(teamId: string, params?: { archived?: boolean }) {
+    const q = new URLSearchParams();
+    if (params?.archived) {
+      q.set('archived', 'true');
+    }
+    const suffix = q.toString() ? `?${q.toString()}` : '';
+    return this.request<TaskWithPeople[]>(`/api/teams/${teamId}/tasks${suffix}`);
+  }
+
+  generateTeamWeeklyReview(teamId: string) {
+    return this.request<WeeklyReview>(`/api/teams/${teamId}/reviews`, { method: 'POST' });
+  }
+
+  acceptInvite(body: { token: string }) {
+    return this.request<Team>('/api/invites/accept', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  listTaskComments(taskId: string) {
+    return this.request<TaskComment[]>(`/api/tasks/${taskId}/comments`);
+  }
+
+  createTaskComment(taskId: string, body: { body: string }) {
+    return this.request<TaskComment>(`/api/tasks/${taskId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  listTaskActivity(taskId: string) {
+    return this.request<TaskActivityLog[]>(`/api/tasks/${taskId}/activity`);
   }
 }
