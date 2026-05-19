@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  tasks        Task[]
+  categories   Category[]
+  dayCapacities DayCapacity[]
+  weeklyReviews WeeklyReview[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks     Task[]
+
+  @@unique([userId, name])
+}
+
+model Task {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  description String?
+
+  scope    String @default("personal") // personal | team (team is reserved for future)
+  teamId   String?
+  ownerId  String // mirrors userId for personal tasks
+  assigneeId String?
+
+  status String // todo doing done pending canceled
+
+  dueType String @default("none") // none datetime anytime flexible
+  dueAt   DateTime?
+
+  repeatType           String @default("none") // none fixed flexible
+  repeatIntervalDays   Int?
+  flexibleMinDays      Int?
+  flexibleMaxDays      Int?
+  flexibleSkipCount    Int      @default(0)
+  lastCompletedAt      DateTime?
+
+  importance String @default("medium") // low medium high
+  urgency    String @default("medium")
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  weight String @default("normal") // light normal heavy
+
+  archivedAt DateTime?
+  deletedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subtasks SubTask[]
+}
+
+model SubTask {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title     String
+  completed Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// 今日のキャパシティ（日付は UTC 日付文字列 YYYY-MM-DD）
+model DayCapacity {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day       String
+  level     String   // relaxed | normal | busy | overload
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, day])
+}
+
+/// 週次振り返り（v1.5 はルールベース生成。将来 AI に差し替え）
+model WeeklyReview {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   @default("personal")
+  weekStart       DateTime
+  weekEnd         DateTime
+  summary         String
+  insightsJson    String
+  recommendationsJson String
+  rawStatsJson    String
+  createdAt       DateTime @default(now())
+}
