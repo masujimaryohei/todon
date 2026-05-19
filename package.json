@@ -1,0 +1,36 @@
+{
+  "name": "todon",
+  "private": true,
+  "prettier": "@tooling-configs/prettier-config",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile start",
+    "build:web": "pnpm --filter web build",
+    "lint": "pnpm -r run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm run format:check && pnpm run lint",
+    "db:push": "pnpm --filter web exec prisma db push",
+    "db:generate": "pnpm --filter web exec prisma generate"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@next/eslint-plugin-next": "^16.2.6",
+    "@tooling-configs/eslint-config": "git+https://github.com/MasujimaRyohei/tooling-configs.git#path:packages/eslint-config",
+    "@tooling-configs/prettier-config": "git+https://github.com/MasujimaRyohei/tooling-configs.git#path:packages/prettier-config",
+    "@types/node": "^20.17.47",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.14.0",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
