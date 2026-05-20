@@ -1,26 +1,233 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --todon-bg: #fff8f0;
+  --todon-bg-soft: #fff1f2;
+  --todon-surface: #ffffff;
+  --todon-ink: #3f2f2a;
+  --todon-ink-muted: #78716c;
+  --todon-primary: #f97316;
+  --todon-primary-hover: #ea580c;
+  --todon-primary-soft: #ffedd5;
+  --todon-sky: #38bdf8;
+  --todon-sky-soft: #e0f2fe;
+  --todon-pink: #f472b6;
+  --todon-pink-soft: #fce7f3;
+  --todon-mint: #34d399;
+  --todon-mint-soft: #d1fae5;
+  --todon-lavender: #c084fc;
+  --todon-lavender-soft: #f3e8ff;
+  --todon-yellow: #fbbf24;
+  --todon-yellow-soft: #fef9c3;
+  --todon-border: #fed7aa;
+  --todon-shadow: 0 10px 40px -12px rgba(249, 115, 22, 0.22);
+  --background: var(--todon-bg);
+  --foreground: var(--todon-ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-todon-bg: var(--todon-bg);
+  --color-todon-ink: var(--todon-ink);
+  --color-todon-ink-muted: var(--todon-ink-muted);
+  --color-todon-primary: var(--todon-primary);
+  --color-todon-primary-soft: var(--todon-primary-soft);
+  --color-todon-sky: var(--todon-sky);
+  --color-todon-sky-soft: var(--todon-sky-soft);
+  --color-todon-pink: var(--todon-pink);
+  --color-todon-pink-soft: var(--todon-pink-soft);
+  --color-todon-mint: var(--todon-mint);
+  --color-todon-mint-soft: var(--todon-mint-soft);
+  --color-todon-lavender: var(--todon-lavender);
+  --color-todon-lavender-soft: var(--todon-lavender-soft);
+  --color-todon-yellow-soft: var(--todon-yellow-soft);
+  --color-todon-border: var(--todon-border);
+  --font-sans: var(--font-todon);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--todon-bg);
+  color: var(--todon-ink);
+  font-family: var(--font-todon), "Hiragino Maru Gothic ProN", "Yu Gothic UI", sans-serif;
+}
+
+/* 装飾ブロブ（認証・メイン背景） */
+.todon-blobs {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.todon-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  opacity: 0.55;
+}
+
+.todon-blob-pink {
+  top: -4rem;
+  left: -2rem;
+  height: 14rem;
+  width: 14rem;
+  background: #fbcfe8;
+}
+
+.todon-blob-sky {
+  right: -3rem;
+  top: 30%;
+  height: 16rem;
+  width: 16rem;
+  background: #bae6fd;
+}
+
+.todon-blob-yellow {
+  bottom: -5rem;
+  left: 25%;
+  height: 18rem;
+  width: 18rem;
+  background: #fde68a;
+}
+
+.todon-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--todon-primary);
+}
+
+.todon-page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--todon-ink);
+}
+
+.todon-muted {
+  font-size: 0.875rem;
+  color: var(--todon-ink-muted);
+}
+
+.todon-card {
+  border-radius: 1.25rem;
+  border: 2px solid var(--todon-border);
+  background: var(--todon-surface);
+  box-shadow: var(--todon-shadow);
+}
+
+.todon-card-sky {
+  border-color: #bae6fd;
+  background: linear-gradient(145deg, #ffffff 0%, var(--todon-sky-soft) 100%);
+}
+
+.todon-card-pink {
+  border-color: #f9a8d4;
+  background: linear-gradient(145deg, #ffffff 0%, var(--todon-pink-soft) 100%);
+}
+
+.todon-card-mint {
+  border-color: #6ee7b7;
+  background: linear-gradient(145deg, #ffffff 0%, var(--todon-mint-soft) 100%);
+}
+
+.todon-card-lavender {
+  border-color: #d8b4fe;
+  background: linear-gradient(145deg, #ffffff 0%, var(--todon-lavender-soft) 100%);
+}
+
+.todon-card-yellow {
+  border-color: #fde047;
+  background: linear-gradient(145deg, #ffffff 0%, var(--todon-yellow-soft) 100%);
+}
+
+.todon-input {
+  width: 100%;
+  border-radius: 0.875rem;
+  border: 2px solid var(--todon-border);
+  background: #fff;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--todon-ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.todon-input:focus {
+  outline: none;
+  border-color: var(--todon-sky);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+}
+
+.todon-btn-primary {
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 55%, #f472b6 100%);
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(249, 115, 22, 0.55);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.todon-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.todon-btn-primary:disabled {
+  opacity: 0.55;
+}
+
+.todon-btn-ghost {
+  border-radius: 9999px;
+  border: 2px solid var(--todon-border);
+  background: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--todon-ink-muted);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.todon-btn-ghost:hover {
+  border-color: var(--todon-sky);
+  background: var(--todon-sky-soft);
+  color: var(--todon-ink);
+}
+
+.todon-link {
+  font-weight: 700;
+  color: var(--todon-primary);
+}
+
+.todon-link:hover {
+  text-decoration: underline;
+}
+
+.todon-task-link {
+  display: block;
+  border-radius: 1rem;
+  border: 2px solid var(--todon-border);
+  background: #fff;
+  padding: 0.875rem 1rem;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.todon-task-link:hover {
+  transform: translateY(-2px);
+  border-color: var(--todon-sky);
+  box-shadow: 0 8px 24px -10px rgba(56, 189, 248, 0.45);
+}
+
+.todon-error {
+  font-size: 0.875rem;
+  color: #e11d48;
+}
+
+.todon-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--todon-ink-muted);
 }

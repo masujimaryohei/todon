@@ -94,21 +94,21 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-emerald-700">v2 · チーム</p>
-          <h1 className="text-2xl font-semibold text-white">{team.name}</h1>
+          <p className="todon-eyebrow">v2 · チーム</p>
+          <h1 className="todon-page-title">{team.name}</h1>
           <p className="mt-1 text-xs text-slate-400">
             あなたのロール: {team.myRole ? roleLabels[team.myRole] : '—'} / メンバー {team.memberCount ?? members.length} 人
           </p>
         </div>
-        <Link href="/teams" className="text-sm text-emerald-300 hover:underline">
+        <Link href="/teams" className="todon-link">
           一覧へ
         </Link>
       </div>
 
       {message ? <p className="text-sm text-emerald-200">{message}</p> : null}
-      {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+      {error ? <p className="todon-error">{error}</p> : null}
 
-      <section className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+      <section className="space-y-3 todon-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-white">チームタスク</h2>
           <Link
@@ -120,7 +120,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
         </div>
 
         {tasks.length === 0 ? (
-          <p className="text-sm text-slate-400">チームタスクはまだありません</p>
+          <p className="todon-muted">チームタスクはまだありません</p>
         ) : (
           <ul className="space-y-2">
             {tasks.map((task) => (
@@ -141,7 +141,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
         )}
       </section>
 
-      <section className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+      <section className="space-y-3 todon-card p-5">
         <h2 className="text-lg font-semibold text-white">メンバー</h2>
         <ul className="space-y-2">
           {members.map((member) => (
@@ -183,14 +183,14 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
           type="button"
           disabled={loading || !canAdmin}
           onClick={() => void onTeamReview()}
-          className="mt-3 rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 disabled:opacity-50"
+          className="mt-3 todon-btn-primary disabled:opacity-50"
         >
           今週のチーム振り返りを生成
         </button>
         {!canAdmin ? (
           <p className="mt-2 text-xs text-slate-500">生成はオーナー・管理者のみ可能です</p>
         ) : null}
-        <Link href="/reviews" className="mt-3 inline-block text-sm text-emerald-300 hover:underline">
+        <Link href="/reviews" className="mt-3 inline-block todon-link">
           振り返り一覧へ →
         </Link>
       </section>

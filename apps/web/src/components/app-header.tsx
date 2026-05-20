@@ -3,30 +3,35 @@ import Link from 'next/link';
 import { LogoutButton } from '@/components/logout-button';
 
 const nav = [
-  { href: '/dashboard', label: 'ダッシュボード' },
-  { href: '/tasks', label: '個人タスク' },
-  { href: '/teams', label: 'チーム' },
-  { href: '/reviews', label: '振り返り' },
-  { href: '/archive', label: 'アーカイブ' },
+  { href: '/dashboard', label: 'ダッシュボード', emoji: '🏠' },
+  { href: '/tasks', label: '個人タスク', emoji: '✏️' },
+  { href: '/teams', label: 'チーム', emoji: '👋' },
+  { href: '/reviews', label: '振り返り', emoji: '📝' },
+  { href: '/archive', label: 'アーカイブ', emoji: '📦' },
 ];
 
 export function AppHeader() {
   return (
-    <header className="border-b border-emerald-900/40 bg-slate-950/80 backdrop-blur">
+    <header className="relative border-b-2 border-todon-border bg-white/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-emerald-300">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 rounded-full bg-todon-primary-soft px-3 py-1.5 text-lg font-extrabold text-todon-primary transition hover:bg-todon-yellow-soft"
+          >
+            <span aria-hidden>🐣</span>
             TodoN
           </Link>
-          <span className="text-xs text-emerald-700">トドン</span>
+          <span className="hidden text-xs font-bold text-todon-ink-muted sm:inline">トドン</span>
         </div>
-        <nav className="hidden items-center gap-2 text-sm text-slate-200 sm:flex">
+        <nav className="hidden items-center gap-1.5 text-sm sm:flex">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 transition hover:bg-emerald-900/30"
+              className="flex items-center gap-1 rounded-full px-3 py-2 font-bold text-todon-ink-muted transition hover:bg-todon-sky-soft hover:text-todon-ink"
             >
+              <span aria-hidden>{item.emoji}</span>
               {item.label}
             </Link>
           ))}

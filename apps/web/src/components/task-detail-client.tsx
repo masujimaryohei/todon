@@ -243,7 +243,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Link href="/tasks" className="text-sm text-emerald-300 hover:underline">
+          <Link href="/tasks" className="todon-link">
             ← 一覧へ
           </Link>
           {initial.scope === 'team' && initial.teamId ? (
@@ -259,14 +259,14 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
         ) : null}
       </div>
 
-      <div className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+      <div className="space-y-4 todon-card p-6">
         <div className="space-y-2">
           <label className="text-sm text-slate-200">タイトル</label>
           <input
             value={title}
             disabled={archived}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+            className="todon-input disabled:opacity-50"
           />
         </div>
 
@@ -277,7 +277,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
             disabled={archived}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+            className="todon-input disabled:opacity-50"
           />
         </div>
 
@@ -288,7 +288,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               value={status}
               disabled={archived}
               onChange={(e) => setStatus(e.target.value as Task['status'])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="todon-input disabled:opacity-50"
             >
               {(Object.keys(statusLabels) as Task['status'][]).map((key) => (
                 <option key={key} value={key}>
@@ -304,7 +304,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               value={dueType}
               disabled={archived}
               onChange={(e) => setDueType(e.target.value as Task['dueType'])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="todon-input disabled:opacity-50"
             >
               <option value="none">なし</option>
               <option value="datetime">日時指定</option>
@@ -321,7 +321,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
                 disabled={archived}
                 value={dueAt}
                 onChange={(e) => setDueAt(e.target.value)}
-                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="todon-input disabled:opacity-50"
               />
             </div>
           ) : null}
@@ -332,7 +332,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               value={importance}
               disabled={archived}
               onChange={(e) => setImportance(e.target.value as Task['importance'])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="todon-input disabled:opacity-50"
             >
               <option value="low">低</option>
               <option value="medium">中</option>
@@ -346,7 +346,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               value={urgency}
               disabled={archived}
               onChange={(e) => setUrgency(e.target.value as Task['urgency'])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="todon-input disabled:opacity-50"
             >
               <option value="low">低</option>
               <option value="medium">中</option>
@@ -360,7 +360,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               value={weight}
               disabled={archived}
               onChange={(e) => setWeight(e.target.value as Task['weight'])}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+              className="todon-input disabled:opacity-50"
             >
               <option value="light">軽い</option>
               <option value="normal">普通</option>
@@ -400,14 +400,14 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
         ) : null}
 
         {message ? <p className="text-sm text-emerald-200">{message}</p> : null}
-        {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+        {error ? <p className="todon-error">{error}</p> : null}
 
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
             disabled={archived || loading}
             onClick={() => void save()}
-            className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400 disabled:opacity-50"
+            className="todon-btn-primary disabled:opacity-50"
           >
             変更を保存
           </button>
@@ -440,7 +440,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
         </div>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+      <div className="space-y-3 todon-card p-6">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-white">サブタスク</h2>

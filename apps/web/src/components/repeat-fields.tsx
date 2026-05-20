@@ -30,7 +30,7 @@ export function RepeatFields({
       <div className="space-y-2">
         <label className="text-sm text-slate-200">種別</label>
         <select
-          className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+          className="todon-input"
           value={repeatType}
           onChange={(e) => onRepeatTypeChange(e.target.value as RepeatType)}
         >
@@ -47,7 +47,7 @@ export function RepeatFields({
             type="number"
             min={1}
             max={365}
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={repeatIntervalDays}
             onChange={(e) => onRepeatIntervalDaysChange(Number(e.target.value))}
           />
@@ -62,7 +62,7 @@ export function RepeatFields({
               type="number"
               min={1}
               max={90}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+              className="todon-input"
               value={flexibleMinDays}
               onChange={(e) => onFlexibleMinDaysChange(Number(e.target.value))}
             />
@@ -73,7 +73,7 @@ export function RepeatFields({
               type="number"
               min={1}
               max={180}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+              className="todon-input"
               value={flexibleMaxDays}
               onChange={(e) => onFlexibleMaxDaysChange(Number(e.target.value))}
             />

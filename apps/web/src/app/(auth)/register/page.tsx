@@ -42,53 +42,45 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1 text-center">
-        <h2 className="text-xl font-semibold text-white">アカウント登録</h2>
-        <p className="text-sm text-slate-400">8文字以上のパスワードを設定してください</p>
+        <h2 className="text-xl font-extrabold text-todon-ink">はじめての TodoN 🎉</h2>
+        <p className="text-sm text-todon-ink-muted">8文字以上のパスワードを設定してください</p>
       </div>
       <form className="space-y-4" onSubmit={(e) => void onSubmit(e)}>
         <div className="space-y-2 text-left">
-          <label className="text-xs uppercase tracking-wide text-emerald-700">表示名（任意）</label>
-          <input
-            className="w-full rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-white"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <label className="todon-label">表示名（任意）</label>
+          <input className="todon-input" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="space-y-2 text-left">
-          <label className="text-xs uppercase tracking-wide text-emerald-700">メール</label>
+          <label className="todon-label">メール</label>
           <input
             type="email"
             autoComplete="email"
-            className="w-full rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div className="space-y-2 text-left">
-          <label className="text-xs uppercase tracking-wide text-emerald-700">パスワード</label>
+          <label className="todon-label">パスワード</label>
           <input
             type="password"
             autoComplete="new-password"
             minLength={8}
-            className="w-full rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        {error ? <p className="text-sm text-rose-400">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-300 disabled:opacity-50"
-        >
+        {error ? <p className="todon-error">{error}</p> : null}
+        <button type="submit" disabled={loading} className="todon-btn-primary w-full">
           {loading ? '送信中…' : '登録してはじめる'}
         </button>
       </form>
-      <p className="text-center text-sm text-slate-400">
+      <p className="text-center text-sm text-todon-ink-muted">
         すでにアカウントがありますか？{' '}
-        <Link className="font-semibold text-emerald-300 hover:underline" href="/login">
+        <Link className="todon-link" href="/login">
           ログイン
         </Link>
       </p>

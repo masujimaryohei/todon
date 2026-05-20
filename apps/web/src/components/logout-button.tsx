@@ -16,11 +16,7 @@ export function LogoutButton() {
   }
 
   return (
-    <button
-      type="button"
-      className="rounded-md border border-emerald-800 px-3 py-1.5 text-xs text-emerald-100 transition hover:bg-emerald-900/40"
-      onClick={() => void onLogout()}
-    >
+    <button type="button" className="todon-btn-ghost text-xs" onClick={() => void onLogout()}>
       ログアウト
     </button>
   );

@@ -1,15 +1,11 @@
 import "./globals.css";
 
-import { Geist, Geist_Mono } from 'next/font/google';
+import { M_PLUS_Rounded_1c } from 'next/font/google';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const todonFont = M_PLUS_Rounded_1c({
+  variable: '--font-todon',
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '800'],
 });
 
 export const metadata = {
@@ -25,7 +21,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${todonFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

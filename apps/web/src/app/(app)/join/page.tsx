@@ -13,10 +13,10 @@ export default async function JoinPage() {
   return (
     <div className="mx-auto max-w-lg space-y-4">
       <div>
-        <p className="text-sm text-emerald-700">v2 · 招待</p>
-        <h1 className="text-2xl font-semibold text-white">チームに参加</h1>
+        <p className="todon-eyebrow">v2 · 招待</p>
+        <h1 className="todon-page-title">チームに参加</h1>
       </div>
-      <Suspense fallback={<p className="text-sm text-slate-400">読み込み中…</p>}>
+      <Suspense fallback={<p className="todon-muted">読み込み中…</p>}>
         <JoinTeamClient />
       </Suspense>
     </div>

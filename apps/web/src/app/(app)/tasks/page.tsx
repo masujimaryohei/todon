@@ -46,18 +46,18 @@ export default async function TasksPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-emerald-700">個人タスク（v1）</p>
-          <h1 className="text-2xl font-semibold text-white">一覧</h1>
+          <p className="todon-eyebrow">個人タスク（v1）</p>
+          <h1 className="todon-page-title">一覧</h1>
         </div>
         <Link
           href="/tasks/new"
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400"
+          className="todon-btn-primary transition hover:bg-emerald-400"
         >
           新規作成
         </Link>
       </div>
       {tasks.length === 0 ? (
-        <p className="text-sm text-slate-400">
+        <p className="todon-muted">
           まだタスクがありません。上部のボタンから作成してください。
         </p>
       ) : (

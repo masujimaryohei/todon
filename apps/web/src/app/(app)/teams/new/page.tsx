@@ -14,10 +14,10 @@ export default async function NewTeamPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-emerald-700">v2 · チーム</p>
-          <h1 className="text-2xl font-semibold text-white">チームを作成</h1>
+          <p className="todon-eyebrow">v2 · チーム</p>
+          <h1 className="todon-page-title">チームを作成</h1>
         </div>
-        <Link href="/teams" className="text-sm text-emerald-300 hover:underline">
+        <Link href="/teams" className="todon-link">
           一覧へ
         </Link>
       </div>

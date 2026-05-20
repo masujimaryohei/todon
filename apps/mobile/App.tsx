@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuthContext } from './src/auth-context';
+import { theme } from './src/theme';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
 
@@ -13,8 +14,8 @@ function Router() {
 
   if (!hydrated) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#020617', alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator color="#34d399" />
+      <View style={{ flex: 1, backgroundColor: theme.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator color={theme.primary} />
       </View>
     );
   }
@@ -27,7 +28,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <AuthProvider>
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
           <Router />
         </AuthProvider>
       </SafeAreaProvider>

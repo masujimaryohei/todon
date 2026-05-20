@@ -8,13 +8,23 @@ import TaskListScreen from '../screens/TaskListScreen';
 import TeamCreateScreen from '../screens/TeamCreateScreen';
 import TeamDetailScreen from '../screens/TeamDetailScreen';
 import TeamListScreen from '../screens/TeamListScreen';
+import { theme } from '../theme';
 import type { AppStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Dashboard">
+    <Stack.Navigator
+      initialRouteName="Dashboard"
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.surface },
+        headerTintColor: theme.ink,
+        headerTitleStyle: { fontWeight: '800' },
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor: theme.bg },
+      }}
+    >
       <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'TodoN · 今日' }} />
       <Stack.Screen name="Tasks" component={TaskListScreen} options={{ title: 'TodoN · リスト' }} />
       <Stack.Screen name="Teams" component={TeamListScreen} options={{ title: 'チーム' }} />

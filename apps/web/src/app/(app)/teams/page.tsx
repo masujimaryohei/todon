@@ -16,12 +16,12 @@ export default async function TeamsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-emerald-700">v2 · チーム</p>
-          <h1 className="text-2xl font-semibold text-white">チーム一覧</h1>
+          <p className="todon-eyebrow">v2 · チーム</p>
+          <h1 className="todon-page-title">チーム一覧</h1>
         </div>
         <Link
           href="/teams/new"
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950"
+          className="todon-btn-primary"
         >
           チームを作成
         </Link>
@@ -49,14 +49,14 @@ export default async function TeamsPage() {
       ) : null}
 
       {teams.length === 0 ? (
-        <p className="text-sm text-slate-400">まだチームがありません。作成するか、招待を受け取ってください。</p>
+        <p className="todon-muted">まだチームがありません。作成するか、招待を受け取ってください。</p>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {teams.map((team) => (
             <li key={team.id}>
               <Link
                 href={`/teams/${team.id}`}
-                className="block rounded-xl border border-slate-800 bg-slate-900/50 p-5 transition hover:border-emerald-600/50"
+                className="block todon-card p-5 transition hover:border-emerald-600/50"
               >
                 <h2 className="text-lg font-semibold text-white">{team.name}</h2>
                 <p className="mt-1 text-xs text-slate-400">

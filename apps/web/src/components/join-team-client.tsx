@@ -43,7 +43,7 @@ export function JoinTeamClient() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+    <div className="space-y-4 todon-card p-6">
       <p className="text-sm text-slate-300">
         チームへの招待を受け取りました。ログイン中のアカウントで参加します。
       </p>
@@ -54,12 +54,12 @@ export function JoinTeamClient() {
           type="button"
           disabled={loading}
           onClick={() => void onAccept()}
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 disabled:opacity-50"
+          className="todon-btn-primary disabled:opacity-50"
         >
           {loading ? '参加中…' : 'チームに参加する'}
         </button>
       )}
-      {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+      {error ? <p className="todon-error">{error}</p> : null}
     </div>
   );
 }

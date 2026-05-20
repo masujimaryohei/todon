@@ -141,11 +141,11 @@ export function NewTaskForm({ categories, teams }: Props) {
   }
 
   return (
-    <form onSubmit={(e) => void onSubmit(e)} className="space-y-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+    <form onSubmit={(e) => void onSubmit(e)} className="space-y-6 todon-card p-6">
       <div className="space-y-2">
         <label className="text-sm text-slate-200">タイトル（必須）</label>
         <input
-          className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+          className="todon-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -155,7 +155,7 @@ export function NewTaskForm({ categories, teams }: Props) {
       <div className="space-y-2">
         <label className="text-sm text-slate-200">詳細</label>
         <textarea
-          className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+          className="todon-input"
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -166,7 +166,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">スコープ</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={scope}
             onChange={(e) => {
               const next = e.target.value as 'personal' | 'team';
@@ -188,7 +188,7 @@ export function NewTaskForm({ categories, teams }: Props) {
             <div className="space-y-2">
               <label className="text-sm text-slate-200">チーム</label>
               <select
-                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+                className="todon-input"
                 value={teamId}
                 onChange={(e) => {
                   setTeamId(e.target.value);
@@ -207,7 +207,7 @@ export function NewTaskForm({ categories, teams }: Props) {
             <div className="space-y-2">
               <label className="text-sm text-slate-200">担当者（任意）</label>
               <select
-                className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+                className="todon-input"
                 value={assigneeId}
                 onChange={(e) => setAssigneeId(e.target.value)}
               >
@@ -225,7 +225,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">期日タイプ</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={dueType}
             onChange={(e) => setDueType(e.target.value as typeof dueType)}
           >
@@ -240,7 +240,7 @@ export function NewTaskForm({ categories, teams }: Props) {
             <label className="text-sm text-slate-200">期限</label>
             <input
               type="datetime-local"
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+              className="todon-input"
               value={dueAt}
               onChange={(e) => setDueAt(e.target.value)}
             />
@@ -250,7 +250,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">カテゴリ</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
           >
@@ -266,7 +266,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">重要度</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={importance}
             onChange={(e) => setImportance(e.target.value as typeof importance)}
           >
@@ -279,7 +279,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">緊急度</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={urgency}
             onChange={(e) => setUrgency(e.target.value as typeof urgency)}
           >
@@ -292,7 +292,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         <div className="space-y-2">
           <label className="text-sm text-slate-200">タスクの重さ</label>
           <select
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
             value={weight}
             onChange={(e) => setWeight(e.target.value as typeof weight)}
           >
@@ -314,17 +314,17 @@ export function NewTaskForm({ categories, teams }: Props) {
         onFlexibleMaxDaysChange={setFlexibleMaxDays}
       />
 
-      {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+      {error ? <p className="todon-error">{error}</p> : null}
 
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-400 disabled:opacity-50"
+          className="todon-btn-primary disabled:opacity-50"
         >
           {loading ? '保存中…' : '作成する'}
         </button>
-        <Link href="/tasks" className="text-sm text-emerald-300 hover:underline">
+        <Link href="/tasks" className="todon-link">
           キャンセル
         </Link>
       </div>

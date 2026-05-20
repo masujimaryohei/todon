@@ -37,8 +37,8 @@ export default async function ArchivePage() {
     <div className="space-y-4">
       <div>
         <p className="text-sm text-amber-300">安全な削除の前段階</p>
-        <h1 className="text-2xl font-semibold text-white">アーカイブ</h1>
-        <p className="text-sm text-slate-400">
+        <h1 className="todon-page-title">アーカイブ</h1>
+        <p className="todon-muted">
           仕様どおり、通常一覧からの直接削除はできません。アーカイブ後にのみ削除できます。
         </p>
       </div>
@@ -53,7 +53,7 @@ export default async function ArchivePage() {
         </ul>
       )}
 
-      <Link href="/tasks" className="text-sm text-emerald-300 hover:underline">
+      <Link href="/tasks" className="todon-link">
         アクティブなタスクへ戻る
       </Link>
     </div>

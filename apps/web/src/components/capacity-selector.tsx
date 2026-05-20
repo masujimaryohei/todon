@@ -34,13 +34,13 @@ export function CapacitySelector({ initial }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="todon-card todon-card-sky p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-emerald-700">今日のキャパシティ</p>
-          <p className="text-sm text-slate-300">だいたいリピートの表示量を調整します</p>
+          <p className="todon-eyebrow">今日のキャパシティ</p>
+          <p className="text-sm text-todon-ink-muted">だいたいリピートの表示量を、気分に合わせて調整</p>
         </div>
-        {saving ? <span className="text-xs text-slate-500">保存中…</span> : null}
+        {saving ? <span className="text-xs font-bold text-todon-ink-muted">保存中…</span> : null}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {levels.map((item) => (
@@ -48,10 +48,10 @@ export function CapacitySelector({ initial }: Props) {
             key={item}
             type="button"
             onClick={() => void onChange(item)}
-            className={`rounded-full px-3 py-1.5 text-sm transition ${
+            className={`rounded-full px-4 py-2 text-sm font-bold transition ${
               level === item
-                ? 'bg-emerald-500 font-semibold text-emerald-950'
-                : 'border border-slate-700 text-slate-300 hover:border-emerald-700'
+                ? 'bg-todon-primary text-white shadow-md'
+                : 'border-2 border-todon-border bg-white text-todon-ink-muted hover:border-todon-sky hover:bg-todon-sky-soft'
             }`}
           >
             {CAPACITY_LABELS[item]}

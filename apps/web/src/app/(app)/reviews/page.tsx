@@ -17,16 +17,16 @@ export default async function ReviewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm text-emerald-700">v1.5 · ルールベース</p>
-        <h1 className="text-2xl font-semibold text-white">週次振り返り</h1>
-        <p className="text-sm text-slate-400">
+        <p className="todon-eyebrow">v1.5 · ルールベース</p>
+        <h1 className="todon-page-title">週次振り返り</h1>
+        <p className="todon-muted">
           完了数・保留・だいたいリピートの傾向から提案を生成します（将来 AI 連携予定）
         </p>
       </div>
 
       <ReviewsClient initialReviews={reviews} />
 
-      <Link href="/dashboard" className="inline-block text-sm text-emerald-300 hover:underline">
+      <Link href="/dashboard" className="inline-block todon-link">
         ← ダッシュボードへ
       </Link>
     </div>

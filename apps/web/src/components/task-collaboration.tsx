@@ -130,7 +130,7 @@ export function TaskCollaboration({ task, members }: Props) {
             <select
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+              className="todon-input"
             >
               <option value="">未割当</option>
               {members.map((m) => (
@@ -155,7 +155,7 @@ export function TaskCollaboration({ task, members }: Props) {
         <h2 className="text-lg font-semibold text-white">コメント</h2>
         <ul className="space-y-3">
           {comments.length === 0 ? (
-            <li className="text-sm text-slate-400">コメントはまだありません</li>
+            <li className="todon-muted">コメントはまだありません</li>
           ) : (
             comments.map((comment) => (
               <li key={comment.id} className="rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2">
@@ -175,7 +175,7 @@ export function TaskCollaboration({ task, members }: Props) {
             onChange={(e) => setBody(e.target.value)}
             rows={3}
             placeholder="コメントを書く"
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+            className="todon-input"
           />
           <button
             type="submit"
@@ -190,7 +190,7 @@ export function TaskCollaboration({ task, members }: Props) {
       <section className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-lg font-semibold text-white">履歴</h2>
         {activity.length === 0 ? (
-          <p className="text-sm text-slate-400">履歴はまだありません</p>
+          <p className="todon-muted">履歴はまだありません</p>
         ) : (
           <ul className="space-y-2 text-sm text-slate-300">
             {activity.map((log) => (
@@ -212,7 +212,7 @@ export function TaskCollaboration({ task, members }: Props) {
         )}
       </section>
 
-      {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+      {error ? <p className="todon-error">{error}</p> : null}
     </div>
   );
 }
