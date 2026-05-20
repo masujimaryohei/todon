@@ -1,5 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { Task } from '@todon/shared';
+import type {
+  Task,
+  TaskActivityLog,
+  TaskComment,
+  TaskWithPeople,
+  TeamMember,
+} from '@todon/shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -7,6 +13,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -29,11 +36,43 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
   const { taskId } = route.params;
 
   const [loading, setLoading] = useState(true);
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<TaskWithPeople | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [comments, setComments] = useState<TaskComment[]>([]);
+  const [activity, setActivity] = useState<TaskActivityLog[]>([]);
+  const [pendingAssigneeId, setPendingAssigneeId] = useState<string | ''>('');
+  const [commentBody, setCommentBody] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
     const row = await client.getTask(taskId);
     setTask(row);
+    setPendingAssigneeId(typeof row.assigneeId === 'string' ? row.assigneeId : '');
+
+    if (row.scope === 'team' && row.teamId) {
+      try {
+        const m = await client.listTeamMembers(row.teamId);
+        setMembers(m);
+      } catch {
+        setMembers([]);
+      }
+
+      try {
+        const [c, a] = await Promise.all([
+          client.listTaskComments(taskId),
+          client.listTaskActivity(taskId),
+        ]);
+        setComments(c);
+        setActivity(a);
+      } catch {
+        setComments([]);
+        setActivity([]);
+      }
+    } else {
+      setMembers([]);
+      setComments([]);
+      setActivity([]);
+    }
   }, [client, taskId]);
 
   useEffect(() => {
@@ -115,6 +154,42 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
     }
   }
 
+  async function applyAssignee() {
+    if (!task || task.scope !== 'team') {
+      return;
+    }
+
+    const nextVal = pendingAssigneeId === '' ? null : pendingAssigneeId;
+
+    setBusy(true);
+    try {
+      await client.updateTask(task.id, { assigneeId: nextVal });
+      await load();
+    } catch (error) {
+      Alert.alert('担当の更新に失敗', error instanceof Error ? error.message : '');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitComment() {
+    const trimmed = commentBody.trim();
+    if (!task || trimmed.length === 0) {
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const created = await client.createTaskComment(task.id, { body: trimmed });
+      setComments((prev) => [...prev, created]);
+      setCommentBody('');
+    } catch (error) {
+      Alert.alert('投稿に失敗', error instanceof Error ? error.message : '');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading || !task) {
     return (
       <View style={[styles.flexCenter, styles.page]}>
@@ -128,10 +203,21 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
       ? Math.round((task.subtasks.filter((sub) => sub.completed).length / task.subtasks.length) * 100)
       : null;
 
+  const isTeam = task.scope === 'team' && task.teamId;
+
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
       <Text style={styles.title}>{task.title}</Text>
       <Text style={styles.subtitle}>{subtitle}</Text>
+
+      {isTeam ? (
+        <View style={styles.teamBanner}>
+          <Text style={styles.teamBannerText}>チームタスク</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('TeamDetail', { teamId: task.teamId! })}>
+            <Text style={styles.teamBannerLink}>チーム画面へ</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <View style={styles.actions}>
         <TouchableOpacity style={styles.primaryBtn} onPress={() => void markDone()}>
@@ -141,6 +227,87 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
           <Text style={styles.secondaryLabel}>アーカイブ</Text>
         </TouchableOpacity>
       </View>
+
+      {isTeam ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionEyebrow}>協業</Text>
+          <Text style={styles.meta}>
+            オーナー: {task.owner?.name ?? task.owner?.email ?? '—'}
+          </Text>
+          <Text style={styles.meta}>
+            担当: {task.assignee?.name ?? task.assignee?.email ?? '未割当'}
+          </Text>
+
+          <Text style={[styles.miniLabel, { marginTop: 10 }]}>担当を変更</Text>
+          <TouchableOpacity
+            style={[styles.assignRow, pendingAssigneeId === '' ? styles.assignRowOn : undefined]}
+            onPress={() => setPendingAssigneeId('')}
+          >
+            <Text style={styles.assignText}>未割当</Text>
+          </TouchableOpacity>
+          {members.map((m) => (
+            <TouchableOpacity
+              key={m.userId}
+              style={[
+                styles.assignRow,
+                pendingAssigneeId === m.userId ? styles.assignRowOn : undefined,
+              ]}
+              onPress={() => setPendingAssigneeId(m.userId)}
+            >
+              <Text style={styles.assignText}>{m.user?.name ?? m.user?.email ?? m.userId}</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity
+            disabled={busy}
+            style={[styles.assignSubmit, busy ? styles.opacityDim : undefined]}
+            onPress={() => void applyAssignee()}
+          >
+            <Text style={styles.assignSubmitLabel}>担当を適用</Text>
+          </TouchableOpacity>
+
+          <Text style={[styles.miniLabel, { marginTop: 18 }]}>コメント</Text>
+          {(comments ?? []).length === 0 ? (
+            <Text style={styles.bodyMuted}>まだありません</Text>
+          ) : (
+            (comments ?? []).map((c) => (
+              <View key={c.id} style={styles.commentBox}>
+                <Text style={styles.commentMeta}>
+                  {c.user?.name ?? c.user?.email ?? 'ユーザー'} ·{' '}
+                  {new Date(c.createdAt).toLocaleString('ja-JP')}
+                </Text>
+                <Text style={styles.commentBody}>{c.body}</Text>
+              </View>
+            ))
+          )}
+          <TextInput
+            style={styles.commentInput}
+            placeholder="コメントを書く"
+            placeholderTextColor="#64748b"
+            value={commentBody}
+            onChangeText={setCommentBody}
+            multiline
+          />
+          <TouchableOpacity
+            disabled={busy || !commentBody.trim()}
+            style={[styles.commentBtn, busy || !commentBody.trim() ? styles.opacityDim : undefined]}
+            onPress={() => void submitComment()}
+          >
+            <Text style={styles.commentBtnLabel}>投稿</Text>
+          </TouchableOpacity>
+
+          <Text style={[styles.miniLabel, { marginTop: 14 }]}>履歴（直近）</Text>
+          {activity.slice(0, 12).length === 0 ? (
+            <Text style={styles.bodyMuted}>履歴がありません</Text>
+          ) : (
+            activity.slice(0, 12).map((log) => (
+              <Text key={log.id} style={styles.activityLine}>
+                {new Date(log.createdAt).toLocaleString('ja-JP')} · {log.action}
+                {log.before || log.after ? ` (${log.before ?? '—'} → ${log.after ?? '—'})` : ''}
+              </Text>
+            ))
+          )}
+        </View>
+      ) : null}
 
       <View style={styles.section}>
         <Text style={styles.sectionEyebrow}>詳細</Text>
@@ -154,9 +321,7 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
         </Text>
 
         {task.archivedAt ? (
-          <Text style={styles.meta}>
-            アーカイブ: {new Date(task.archivedAt).toLocaleString('ja-JP')}
-          </Text>
+          <Text style={styles.meta}>アーカイブ: {new Date(task.archivedAt).toLocaleString('ja-JP')}</Text>
         ) : null}
 
         {task.deletedAt ? (
@@ -207,7 +372,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
     backgroundColor: '#020617',
-    gap: 20,
+    gap: 16,
   },
   title: {
     color: '#f8fafc',
@@ -221,9 +386,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
+  teamBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#4338ca',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#1e1b4b44',
+    gap: 8,
+  },
+  teamBannerText: { color: '#c7d2fe', fontWeight: '700', fontSize: 13 },
+  teamBannerLink: { color: '#a5b4fc', fontWeight: '700' },
   actions: {
     gap: 10,
-    marginTop: 8,
+    marginTop: 4,
     flexWrap: 'wrap',
     flexDirection: 'row',
   },
@@ -274,10 +453,21 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     fontSize: 11,
   },
+  miniLabel: {
+    color: '#94a3b8',
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
   body: {
     color: '#e2e8f0',
     fontSize: 15,
     lineHeight: 22,
+  },
+  bodyMuted: {
+    color: '#64748b',
+    fontSize: 13,
   },
   meta: {
     color: '#94a3b8',
@@ -318,5 +508,65 @@ const styles = StyleSheet.create({
   strikeLabel: {
     textDecorationLine: 'line-through',
     color: '#a7f3d0aa',
+  },
+  assignRow: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#334155',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginTop: 6,
+  },
+  assignRowOn: {
+    borderColor: '#818cf8',
+    backgroundColor: '#1e1b4b55',
+  },
+  assignText: { color: '#e2e8f0', fontWeight: '600' },
+  assignSubmit: {
+    marginTop: 10,
+    borderRadius: 8,
+    backgroundColor: '#4338ca',
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  assignSubmitLabel: { color: '#eef2ff', fontWeight: '700', fontSize: 13 },
+  opacityDim: { opacity: 0.55 },
+  commentBox: {
+    marginTop: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#334155',
+    padding: 10,
+    gap: 4,
+  },
+  commentMeta: { color: '#64748b', fontSize: 11 },
+  commentBody: { color: '#e2e8f0', fontSize: 14, lineHeight: 20 },
+  commentInput: {
+    marginTop: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#475569',
+    padding: 12,
+    minHeight: 72,
+    textAlignVertical: 'top',
+    color: '#f8fafc',
+    fontSize: 14,
+  },
+  commentBtn: {
+    marginTop: 8,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  commentBtnLabel: {
+    color: '#0f172a',
+    fontWeight: '700',
+  },
+  activityLine: {
+    color: '#94a3b8',
+    fontSize: 12,
+    marginTop: 6,
+    lineHeight: 18,
   },
 });

@@ -123,7 +123,7 @@ export class TodoNApiClient {
   }
 
   getTask(id: string) {
-    return this.request<Task>(`/api/tasks/${id}`);
+    return this.request<TaskWithPeople>(`/api/tasks/${id}`);
   }
 
   updateTask(id: string, body: Json) {

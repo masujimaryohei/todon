@@ -93,6 +93,29 @@ export default function DashboardScreen({ navigation }: Props) {
         <Text style={styles.cardBody}>{data.aiSuggestion}</Text>
       </View>
 
+      <TouchableOpacity style={styles.navTeams} onPress={() => navigation.navigate('Teams')}>
+        <Text style={styles.navTeamsLabel}>チーム</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.sectionTitle}>担当チームタスク（{data.myTeamTasks.length}）</Text>
+      {data.myTeamTasks.length === 0 ? (
+        <Text style={styles.muted}>担当のチームタスクはありません</Text>
+      ) : (
+        data.myTeamTasks.map((task) => (
+          <TouchableOpacity
+            key={task.id}
+            style={[styles.taskCard, styles.teamTaskCard]}
+            onPress={() => navigation.navigate('TaskDetail', { taskId: task.id })}
+          >
+            <Text style={styles.taskTitle}>{task.title}</Text>
+            <Text style={styles.taskHint}>
+              {task.status}
+              {task.assignee?.name ? ` · 担当 ${task.assignee.name}` : ''}
+            </Text>
+          </TouchableOpacity>
+        ))
+      )}
+
       <Text style={styles.sectionTitle}>だいたいリピート（{data.todayFlexible.length}）</Text>
       {data.todayFlexible.length === 0 ? (
         <Text style={styles.muted}>今日の候補はありません</Text>
@@ -149,7 +172,25 @@ const styles = StyleSheet.create({
   },
   cardEyebrow: { color: '#6ee7b7', fontSize: 11, textTransform: 'uppercase' },
   cardBody: { color: '#ecfdf5', fontSize: 14, lineHeight: 20 },
-  sectionTitle: { color: '#a7f3d0', fontWeight: '600', marginTop: 8 },
+  navTeams: {
+    alignSelf: 'flex-start',
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#6366f1',
+    backgroundColor: '#1e1b4b33',
+  },
+  navTeamsLabel: {
+    color: '#c7d2fe',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  teamTaskCard: {
+    borderColor: '#4338ca',
+    backgroundColor: '#1e1b4b44',
+  },
   muted: { color: '#64748b', fontSize: 13 },
   taskCard: {
     borderRadius: 10,

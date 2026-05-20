@@ -88,6 +88,9 @@ export default function TaskListScreen({ navigation }: Props) {
     <View style={styles.container}>
       <View style={styles.intro}>
         <View>
+          <TouchableOpacity onPress={() => navigation.navigate('Teams')}>
+            <Text style={styles.teamShortcut}>チーム →</Text>
+          </TouchableOpacity>
           <Text style={styles.eyebrow}>個人タスク</Text>
           <Text style={styles.title}>今日のリスト</Text>
           <Text style={styles.note}>認証状態: {auth.token ? '同期中' : '未ログイン'}</Text>
@@ -148,6 +151,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     marginBottom: 4,
+  },
+  teamShortcut: {
+    color: '#a5b4fc',
+    fontWeight: '700',
+    marginBottom: 6,
+    fontSize: 14,
   },
   eyebrow: {
     letterSpacing: 6,

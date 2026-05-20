@@ -6,6 +6,10 @@ export type AuthStackParamList = {
 export type AppStackParamList = {
   Dashboard: undefined;
   Tasks: undefined;
-  TaskCreate: undefined;
+  Teams: undefined;
+  TeamCreate: undefined;
+  TeamDetail: { teamId: string };
+  JoinInvite: undefined;
+  TaskCreate: { teamId?: string };
   TaskDetail: { taskId: string };
 };
