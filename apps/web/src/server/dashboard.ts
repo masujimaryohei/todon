@@ -1,8 +1,8 @@
 import type { Task as PrismaTask } from '@prisma/client';
 import type { DashboardPayload, FlexibleTaskView, Task } from '@todon/shared';
-import { buildDashboardSuggestion } from '@todon/shared';
+import { buildDashboardSuggestion, computeTodayProgress, formatTodayDateLabel } from '@todon/shared';
 
-import { startOfUtcDay } from '@/lib/date';
+import { endOfLocalDay, localDayKey, startOfLocalDay } from '@/lib/date';
 import { mapTask } from '@/lib/mappers';
 import { prisma } from '@/lib/prisma';
 
@@ -34,12 +34,12 @@ export async function buildDashboard(userId: string, nowInput = new Date()): Pro
 
   const open = rows.filter((t) => !['done', 'canceled'].includes(t.status));
   const capacity = await getTodayCapacity(userId, nowInput);
-  const startToday = startOfUtcDay(nowInput);
-  const endToday = new Date(startToday);
-  endToday.setUTCDate(endToday.getUTCDate() + 1);
+  const startToday = startOfLocalDay(nowInput);
+  const endToday = endOfLocalDay(nowInput);
+  const timeZone = 'Asia/Tokyo';
 
   const soonEnd = new Date(startToday);
-  soonEnd.setUTCDate(soonEnd.getUTCDate() + 7);
+  soonEnd.setDate(soonEnd.getDate() + 7);
 
   const pendingThreshold = new Date(nowInput);
   pendingThreshold.setUTCDate(pendingThreshold.getUTCDate() - 7);
@@ -104,6 +104,11 @@ export async function buildDashboard(userId: string, nowInput = new Date()): Pro
 
   const myTeamTasks = await listMyAssignedTeamTasks(userId);
 
+  const todayProgress = computeTodayProgress(rows, todayFlexible, {
+    start: startToday,
+    end: endToday,
+  });
+
   return {
     overdue: mapRows(overdue),
     dueToday: mapRows(dueToday),
@@ -116,6 +121,13 @@ export async function buildDashboard(userId: string, nowInput = new Date()): Pro
     capacity,
     aiSuggestion,
     notificationCandidates,
+    todayInfo: {
+      dateLabel: formatTodayDateLabel(nowInput, timeZone),
+      dayKey: localDayKey(nowInput),
+      serverNow: nowInput.toISOString(),
+      timeZone,
+    },
+    todayProgress,
   };
 }
 

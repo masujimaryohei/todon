@@ -140,6 +140,17 @@ export type AuthResponse = {
   token: string;
 };
 
+import type { DashboardTodayProgress } from './today-progress';
+
+export type { DashboardTodayProgress };
+
+export type DashboardTodayInfo = {
+  dateLabel: string;
+  dayKey: string;
+  serverNow: string;
+  timeZone: string;
+};
+
 export type DashboardPayload = {
   overdue: Task[];
   dueToday: Task[];
@@ -152,6 +163,8 @@ export type DashboardPayload = {
   capacity: CapacityLevel;
   aiSuggestion: string;
   notificationCandidates: Task[];
+  todayInfo: DashboardTodayInfo;
+  todayProgress: DashboardTodayProgress;
 };
 
 export type Project = {

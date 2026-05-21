@@ -5,5 +5,6 @@ export * from './dashboard-suggestions';
 export * from './flexible-repeat';
 export * from './priority-suggestion';
 export * from './suggest-subtasks';
+export * from './today-progress';
 export * from './types';
 export * from './weight-estimate';

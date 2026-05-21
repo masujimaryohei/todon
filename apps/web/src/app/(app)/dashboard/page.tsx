@@ -1,10 +1,10 @@
 import type { FlexibleTaskView, Task } from '@todon/shared';
-import { CAPACITY_LABELS } from '@todon/shared';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { CapacitySelector } from '@/components/capacity-selector';
+import { DashboardTodayHero } from '@/components/dashboard-today-hero';
 import { getCurrentUserId } from '@/lib/auth/session';
 import { buildDashboard } from '@/server/dashboard';
 
@@ -110,10 +110,15 @@ export default async function DashboardPage() {
             ☀️
           </span>
         </h1>
-        <p className="todon-muted">
-          キャパシティは「{CAPACITY_LABELS[data.capacity]}」— 無理のないペースで進めましょう
-        </p>
       </div>
+
+      <DashboardTodayHero
+        dateLabel={data.todayInfo.dateLabel}
+        dayKey={data.todayInfo.dayKey}
+        timeZone={data.todayInfo.timeZone}
+        capacity={data.capacity}
+        progress={data.todayProgress}
+      />
 
       <CapacitySelector initial={data.capacity} />
 
