@@ -53,9 +53,9 @@ export default function LoginScreen({ navigation }: Props) {
     >
       <ScrollView contentContainerStyle={styles.inner}>
         <View style={styles.brand}>
-          <Text style={styles.brandeyebrow}>TODON</Text>
-          <Text style={styles.title}>TodoN（トドン）</Text>
-          <Text style={styles.sub}>モバイルから同じデータに接続できます</Text>
+          <Text style={styles.brandeyebrow}>はじめまして</Text>
+          <Text style={styles.title}>TodoN ✨</Text>
+          <Text style={styles.sub}>やさしいタスク管理、モバイルでも</Text>
           <Text style={styles.hint}>API: {baseUrl || '(未設定)'}</Text>
         </View>
 
@@ -94,7 +94,7 @@ export default function LoginScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
   },
   inner: {
     flexGrow: 1,
@@ -106,38 +106,38 @@ const styles = StyleSheet.create({
   },
   brandeyebrow: {
     letterSpacing: 10,
-    color: '#10b981',
+    color: '#f97316',
     fontSize: 12,
     textAlign: 'center',
   },
   title: {
     marginTop: 8,
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontSize: 26,
     fontWeight: '600',
     textAlign: 'center',
   },
   sub: {
     marginTop: 8,
-    color: '#cbd5f5',
+    color: '#78716c',
     fontSize: 14,
     textAlign: 'center',
   },
   hint: {
     marginTop: 12,
-    color: '#475569',
+    color: '#78716c',
     fontSize: 12,
     textAlign: 'center',
   },
   card: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#065f46',
+    borderColor: '#fed7aa',
     padding: 20,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
   },
   label: {
-    color: '#a7f3d0',
+    color: '#78716c',
     fontSize: 12,
     textTransform: 'uppercase',
   },
@@ -148,22 +148,22 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#fed7aa',
     paddingHorizontal: 12,
     paddingVertical: Platform.select({ ios: 14, android: 10 }),
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontSize: 16,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
   },
   button: {
     marginTop: 24,
     borderRadius: 10,
-    backgroundColor: '#34d399',
+    backgroundColor: '#f97316',
     paddingVertical: 14,
   },
   buttonLabel: {
     textAlign: 'center',
-    color: '#022c22',
+    color: '#ffffff',
     fontWeight: '600',
     fontSize: 16,
   },
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontSize: 14,
     fontWeight: '600',
   },

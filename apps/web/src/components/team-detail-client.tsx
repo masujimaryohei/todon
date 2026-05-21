@@ -96,7 +96,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
         <div>
           <p className="todon-eyebrow">v2 · チーム</p>
           <h1 className="todon-page-title">{team.name}</h1>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-todon-ink-muted">
             あなたのロール: {team.myRole ? roleLabels[team.myRole] : '—'} / メンバー {team.memberCount ?? members.length} 人
           </p>
         </div>
@@ -105,15 +105,15 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
         </Link>
       </div>
 
-      {message ? <p className="text-sm text-emerald-200">{message}</p> : null}
+      {message ? <p className="todon-link">{message}</p> : null}
       {error ? <p className="todon-error">{error}</p> : null}
 
       <section className="space-y-3 todon-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-white">チームタスク</h2>
+          <h2 className="text-lg font-extrabold text-todon-ink">チームタスク</h2>
           <Link
             href={`/tasks/new?teamId=${team.id}`}
-            className="rounded-md bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-emerald-950"
+            className="todon-btn-primary text-xs"
           >
             タスクを追加
           </Link>
@@ -127,10 +127,10 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
               <li key={task.id}>
                 <Link
                   href={`/tasks/${task.id}`}
-                  className="block rounded-lg border border-slate-800 bg-slate-950/50 px-4 py-3 hover:border-emerald-600/50"
+                  className="block rounded-xl border-2 border-todon-border bg-white px-4 py-3 hover:border-todon-sky"
                 >
-                  <p className="font-medium text-slate-50">{task.title}</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="font-bold text-todon-ink">{task.title}</p>
+                  <p className="text-xs text-todon-ink-muted">
                     {task.status}
                     {task.assignee?.name ? ` / 担当: ${task.assignee.name}` : ' / 未割当'}
                   </p>
@@ -142,15 +142,15 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
       </section>
 
       <section className="space-y-3 todon-card p-5">
-        <h2 className="text-lg font-semibold text-white">メンバー</h2>
+        <h2 className="text-lg font-extrabold text-todon-ink">メンバー</h2>
         <ul className="space-y-2">
           {members.map((member) => (
             <li
               key={member.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2 text-sm"
+              className="flex flex-wrap items-center justify-between gap-2 todon-card px-3 py-2 text-sm"
             >
               <span className="text-slate-100">{member.user?.name ?? member.user?.email ?? member.userId}</span>
-              <span className="text-xs text-slate-400">{roleLabels[member.role]}</span>
+              <span className="text-xs text-todon-ink-muted">{roleLabels[member.role]}</span>
             </li>
           ))}
         </ul>
@@ -163,7 +163,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               required
-              className="flex-1 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+              className="todon-input flex-1"
             />
             <button
               type="submit"
@@ -176,9 +176,9 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
         ) : null}
       </section>
 
-      <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-        <h2 className="text-lg font-semibold text-white">チーム振り返り</h2>
-        <p className="mt-1 text-xs text-slate-400">今週のチームタスク状況から週次レポートを生成します</p>
+      <section className="todon-card p-5">
+        <h2 className="text-lg font-extrabold text-todon-ink">チーム振り返り</h2>
+        <p className="mt-1 text-xs text-todon-ink-muted">今週のチームタスク状況から週次レポートを生成します</p>
         <button
           type="button"
           disabled={loading || !canAdmin}
@@ -188,7 +188,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
           今週のチーム振り返りを生成
         </button>
         {!canAdmin ? (
-          <p className="mt-2 text-xs text-slate-500">生成はオーナー・管理者のみ可能です</p>
+          <p className="mt-2 text-xs text-todon-ink-muted">生成はオーナー・管理者のみ可能です</p>
         ) : null}
         <Link href="/reviews" className="mt-3 inline-block todon-link">
           振り返り一覧へ →

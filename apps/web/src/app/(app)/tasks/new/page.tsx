@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { NewTaskForm } from '@/components/new-task-form';
 import { getCurrentUserId } from '@/lib/auth/session';
 import { listCategories } from '@/server/categories';
+import { listProjects } from '@/server/projects';
 import { listTeamsForUser } from '@/server/teams';
 
 export default async function NewTaskPage() {
@@ -13,7 +14,11 @@ export default async function NewTaskPage() {
     redirect('/login');
   }
 
-  const [categories, teams] = await Promise.all([listCategories(userId), listTeamsForUser(userId)]);
+  const [categories, teams, projects] = await Promise.all([
+    listCategories(userId),
+    listTeamsForUser(userId),
+    listProjects(userId),
+  ]);
 
   return (
     <div className="space-y-4">
@@ -27,7 +32,7 @@ export default async function NewTaskPage() {
         </Link>
       </div>
       <Suspense fallback={<p className="todon-muted">読み込み中…</p>}>
-        <NewTaskForm categories={categories} teams={teams} />
+        <NewTaskForm categories={categories} teams={teams} projects={projects} />
       </Suspense>
     </div>
   );

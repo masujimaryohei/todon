@@ -247,7 +247,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
             ← 一覧へ
           </Link>
           {initial.scope === 'team' && initial.teamId ? (
-            <Link href={`/teams/${initial.teamId}`} className="text-sm text-indigo-300 hover:underline">
+            <Link href={`/teams/${initial.teamId}`} className="text-sm todon-link hover:underline">
               チームへ
             </Link>
           ) : null}
@@ -261,7 +261,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
 
       <div className="space-y-4 todon-card p-6">
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">タイトル</label>
+          <label className="todon-label">タイトル</label>
           <input
             value={title}
             disabled={archived}
@@ -271,7 +271,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">詳細</label>
+          <label className="todon-label">詳細</label>
           <textarea
             value={description}
             disabled={archived}
@@ -283,7 +283,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">ステータス</label>
+            <label className="todon-label">ステータス</label>
             <select
               value={status}
               disabled={archived}
@@ -299,7 +299,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">期日タイプ</label>
+            <label className="todon-label">期日タイプ</label>
             <select
               value={dueType}
               disabled={archived}
@@ -315,7 +315,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
 
           {dueType === 'datetime' ? (
             <div className="space-y-2">
-              <label className="text-sm text-slate-200">期限</label>
+              <label className="todon-label">期限</label>
               <input
                 type="datetime-local"
                 disabled={archived}
@@ -327,7 +327,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
           ) : null}
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">重要度</label>
+            <label className="todon-label">重要度</label>
             <select
               value={importance}
               disabled={archived}
@@ -341,7 +341,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">緊急度</label>
+            <label className="todon-label">緊急度</label>
             <select
               value={urgency}
               disabled={archived}
@@ -355,7 +355,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">重さ</label>
+            <label className="todon-label">重さ</label>
             <select
               value={weight}
               disabled={archived}
@@ -383,14 +383,14 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
         ) : null}
 
         {task.lastCompletedAt ? (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-todon-ink-muted">
             最終完了: {new Date(task.lastCompletedAt).toLocaleString('ja-JP')}
             {task.flexibleSkipCount ? ` / スキップ ${task.flexibleSkipCount} 回` : ''}
           </p>
         ) : null}
 
         {repeatType !== 'none' ? (
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-todon-ink-muted">
             完了にするとリピートタスクは未着手に戻り、次の周期が始まります。
           </p>
         ) : null}
@@ -399,7 +399,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
           <p className="text-sm text-emerald-300">サブタスク進捗: {progress}%</p>
         ) : null}
 
-        {message ? <p className="text-sm text-emerald-200">{message}</p> : null}
+        {message ? <p className="todon-link">{message}</p> : null}
         {error ? <p className="todon-error">{error}</p> : null}
 
         <div className="flex flex-wrap gap-3">
@@ -416,7 +416,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               type="button"
               disabled={loading}
               onClick={() => void onSkipFlexible()}
-              className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800 disabled:opacity-50"
+              className="todon-btn-ghost px-4 py-2 todon-label transition hover:bg-todon-sky-soft disabled:opacity-50"
             >
               今日はスキップ
             </button>
@@ -425,7 +425,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
             type="button"
             disabled={archived || loading}
             onClick={() => void onArchive()}
-            className="rounded-md border border-amber-700 px-4 py-2 text-sm text-amber-100 transition hover:bg-amber-900/30 disabled:opacity-50"
+            className="todon-btn-ghost border-todon-yellow px-4 py-2 text-sm text-amber-800 transition hover:bg-amber-900/30 disabled:opacity-50"
           >
             アーカイブ
           </button>
@@ -433,7 +433,7 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
             type="button"
             disabled={!archived || loading}
             onClick={() => void onDelete()}
-            className="rounded-md border border-rose-800 px-4 py-2 text-sm text-rose-100 transition hover:bg-rose-900/30 disabled:opacity-50"
+            className="todon-btn-ghost border-rose-300 px-4 py-2 text-sm text-rose-700 transition hover:bg-rose-900/30 disabled:opacity-50"
           >
             削除（アーカイブ済みのみ）
           </button>
@@ -443,8 +443,8 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
       <div className="space-y-3 todon-card p-6">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-white">サブタスク</h2>
-            <p className="text-xs text-slate-400">小さなステップに分けて進捗を可視化します</p>
+            <h2 className="text-lg font-extrabold text-todon-ink">サブタスク</h2>
+            <p className="text-xs text-todon-ink-muted">小さなステップに分けて進捗を可視化します</p>
           </div>
         </div>
 
@@ -454,13 +454,13 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
             disabled={archived}
             onChange={(e) => setSubtaskTitle(e.target.value)}
             placeholder="新しいサブタスク"
-            className="flex-1 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white disabled:opacity-50"
+            className="todon-input flex-1 disabled:opacity-50"
           />
           <button
             type="button"
             disabled={archived || loading}
             onClick={() => void addSubtask()}
-            className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white disabled:opacity-50"
+            className="todon-btn-primary transition hover:bg-white disabled:opacity-50"
           >
             追加
           </button>
@@ -472,14 +472,14 @@ export function TaskDetailClient({ task: initial, members = [] }: Props) {
               key={sub.id}
               className="flex items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2"
             >
-              <label className="flex flex-1 items-center gap-2 text-sm text-slate-100">
+              <label className="flex flex-1 items-center gap-2 text-sm text-todon-ink">
                 <input
                   type="checkbox"
                   disabled={archived || loading}
                   checked={sub.completed}
                   onChange={() => void toggleSubtask(sub)}
                 />
-                <span className={sub.completed ? 'line-through text-slate-500' : ''}>{sub.title}</span>
+                <span className={sub.completed ? 'line-through text-todon-ink-muted' : ''}>{sub.title}</span>
               </label>
             </li>
           ))}

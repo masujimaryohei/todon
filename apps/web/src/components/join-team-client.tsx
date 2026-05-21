@@ -44,7 +44,7 @@ export function JoinTeamClient() {
 
   return (
     <div className="space-y-4 todon-card p-6">
-      <p className="text-sm text-slate-300">
+      <p className="text-sm text-todon-ink-muted">
         チームへの招待を受け取りました。ログイン中のアカウントで参加します。
       </p>
       {!token ? (

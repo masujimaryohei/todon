@@ -29,10 +29,12 @@ export async function POST(req: Request) {
     }
 
     const dueAt = payload.data.dueAt ? new Date(payload.data.dueAt) : null;
+    const startAt = payload.data.startAt ? new Date(payload.data.startAt) : null;
 
     const task = await createTask(userId, {
       ...payload.data,
       dueAt,
+      startAt,
     });
 
     return NextResponse.json(task, { status: 201 });

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 export const taskInclude = {
   category: true,
+  project: true,
   subtasks: {
     orderBy: { sortOrder: 'asc' as const },
   },

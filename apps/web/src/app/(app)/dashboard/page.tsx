@@ -171,9 +171,20 @@ export default async function DashboardPage() {
         </Section>
       </div>
 
-      <Link href="/reviews" className="todon-link inline-block text-sm">
-        週次振り返りを見る →
-      </Link>
+      <div className="flex flex-wrap gap-4 text-sm">
+        <Link href="/reviews" className="todon-link">
+          週次振り返り →
+        </Link>
+        <Link href="/templates" className="todon-link">
+          テンプレート →
+        </Link>
+        <Link href="/gantt" className="todon-link">
+          ガント →
+        </Link>
+        <Link href="/archive" className="todon-link">
+          アーカイブ →
+        </Link>
+      </div>
     </div>
   );
 }

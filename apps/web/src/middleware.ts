@@ -17,7 +17,19 @@ export async function middleware(req: NextRequest) {
     pathname === '/teams' ||
     pathname.startsWith('/teams/') ||
     pathname === '/join' ||
-    pathname.startsWith('/join/');
+    pathname.startsWith('/join/') ||
+    pathname === '/settings' ||
+    pathname.startsWith('/settings/') ||
+    pathname === '/calendar' ||
+    pathname.startsWith('/calendar/') ||
+    pathname === '/gantt' ||
+    pathname.startsWith('/gantt/') ||
+    pathname === '/projects' ||
+    pathname.startsWith('/projects/') ||
+    pathname === '/templates' ||
+    pathname.startsWith('/templates/') ||
+    pathname === '/habits' ||
+    pathname.startsWith('/habits/');
 
   if (!isProtected) {
     return NextResponse.next();
@@ -50,5 +62,17 @@ export const config = {
     '/teams/:path*',
     '/join',
     '/join/:path*',
+    '/settings',
+    '/settings/:path*',
+    '/calendar',
+    '/calendar/:path*',
+    '/gantt',
+    '/gantt/:path*',
+    '/projects',
+    '/projects/:path*',
+    '/templates',
+    '/templates/:path*',
+    '/habits',
+    '/habits/:path*',
   ],
 };

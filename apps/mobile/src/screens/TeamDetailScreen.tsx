@@ -116,7 +116,7 @@ export default function TeamDetailScreen({ route, navigation }: Props) {
   if (loading || !team) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color="#6366f1" />
+        <ActivityIndicator color="#c084fc" />
       </View>
     );
   }
@@ -141,7 +141,7 @@ export default function TeamDetailScreen({ route, navigation }: Props) {
             <TextInput
               style={styles.inviteInput}
               placeholder="email@example.com"
-              placeholderTextColor="#64748b"
+              placeholderTextColor="#78716c"
               autoCapitalize="none"
               keyboardType="email-address"
               value={inviteEmail}
@@ -196,56 +196,56 @@ export default function TeamDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  page: { backgroundColor: '#020617', padding: 20, gap: 10, paddingBottom: 48 },
-  scroll: { flex: 1, backgroundColor: '#020617' },
-  centered: { flex: 1, backgroundColor: '#020617', alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 22, fontWeight: '700', color: '#f8fafc' },
+  page: { backgroundColor: '#fff8f0', padding: 20, gap: 10, paddingBottom: 48 },
+  scroll: { flex: 1, backgroundColor: '#fff8f0' },
+  centered: { flex: 1, backgroundColor: '#fff8f0', alignItems: 'center', justifyContent: 'center' },
+  title: { fontSize: 22, fontWeight: '700', color: '#3f2f2a' },
   row: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
   btnPrimary: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#c084fc',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 14,
   },
-  btnPrimaryLabel: { color: '#eef2ff', fontWeight: '700' },
-  btnGhost: { borderRadius: 10, borderWidth: 1, borderColor: '#475569', paddingVertical: 10, paddingHorizontal: 14 },
-  btnGhostLabel: { color: '#94a3b8', fontWeight: '600' },
+  btnPrimaryLabel: { color: '#ffffff', fontWeight: '700' },
+  btnGhost: { borderRadius: 10, borderWidth: 1, borderColor: '#78716c', paddingVertical: 10, paddingHorizontal: 14 },
+  btnGhostLabel: { color: '#78716c', fontWeight: '600' },
   disabled: { opacity: 0.55 },
-  sectionTitle: { color: '#c7d2fe', fontWeight: '700', marginTop: 8, fontSize: 13 },
-  muted: { color: '#64748b', fontSize: 13 },
+  sectionTitle: { color: '#7c3aed', fontWeight: '700', marginTop: 8, fontSize: 13 },
+  muted: { color: '#78716c', fontSize: 13 },
   inviteRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   inviteInput: {
     flex: 1,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
-    backgroundColor: '#0f172a',
-    color: '#f8fafc',
+    borderColor: '#fed7aa',
+    backgroundColor: '#ffffff',
+    color: '#3f2f2a',
     paddingHorizontal: 12,
     paddingVertical: Platform.select({ ios: 10, android: 8 }),
     fontSize: 15,
   },
-  inviteBtn: { backgroundColor: '#4f46e5', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8 },
-  inviteBtnLabel: { color: '#eef2ff', fontWeight: '700', fontSize: 13 },
-  reviewBtn: { marginVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#6366f1', paddingVertical: 10 },
-  reviewBtnLabel: { color: '#a5b4fc', fontWeight: '600', textAlign: 'center' },
+  inviteBtn: { backgroundColor: '#c084fc', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8 },
+  inviteBtnLabel: { color: '#ffffff', fontWeight: '700', fontSize: 13 },
+  reviewBtn: { marginVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#c084fc', paddingVertical: 10 },
+  reviewBtnLabel: { color: '#7c3aed', fontWeight: '600', textAlign: 'center' },
   memberRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: '#fed7aa',
   },
-  memberName: { color: '#e2e8f0', flex: 1 },
-  memberRole: { color: '#64748b', fontSize: 12 },
+  memberName: { color: '#3f2f2a', flex: 1 },
+  memberRole: { color: '#78716c', fontSize: 12 },
   taskCard: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#312e81',
+    borderColor: '#e9d5ff',
     padding: 12,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     gap: 4,
   },
-  taskTitle: { color: '#f8fafc', fontWeight: '600', fontSize: 15 },
-  taskHint: { color: '#94a3b8', fontSize: 12 },
+  taskTitle: { color: '#3f2f2a', fontWeight: '600', fontSize: 15 },
+  taskHint: { color: '#78716c', fontSize: 12 },
 });

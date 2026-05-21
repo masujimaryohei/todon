@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { LogoutButton } from '@/components/logout-button';
 
 const nav = [
-  { href: '/dashboard', label: 'ダッシュボード', emoji: '🏠' },
-  { href: '/tasks', label: '個人タスク', emoji: '✏️' },
+  { href: '/dashboard', label: 'ホーム', emoji: '🏠' },
+  { href: '/tasks', label: 'タスク', emoji: '✏️' },
+  { href: '/calendar', label: 'カレンダー', emoji: '📅' },
+  { href: '/projects', label: 'プロジェクト', emoji: '📁' },
   { href: '/teams', label: 'チーム', emoji: '👋' },
-  { href: '/reviews', label: '振り返り', emoji: '📝' },
-  { href: '/archive', label: 'アーカイブ', emoji: '📦' },
+  { href: '/habits', label: '習慣', emoji: '🌱' },
+  { href: '/settings', label: '設定', emoji: '⚙️' },
 ];
 
 export function AppHeader() {

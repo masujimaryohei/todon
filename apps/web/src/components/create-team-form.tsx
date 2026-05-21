@@ -41,7 +41,7 @@ export function CreateTeamForm() {
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="space-y-4 todon-card p-6">
       <div className="space-y-2">
-        <label className="text-sm text-slate-200">チーム名</label>
+        <label className="todon-label">チーム名</label>
         <input
           className="todon-input"
           value={name}

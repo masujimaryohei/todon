@@ -7,13 +7,13 @@ import { listTasks } from '@/server/tasks';
 
 function Row({ task }: { task: Task }) {
   return (
-    <li className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
+    <li className="todon-card px-4 py-3">
       <div className="flex items-center justify-between gap-3">
         <div>
           <Link href={`/tasks/${task.id}`} className="text-sm font-semibold text-white hover:underline">
             {task.title}
           </Link>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-todon-ink-muted">
             {task.status} / {task.importance} / {task.urgency}
           </p>
         </div>
@@ -44,7 +44,7 @@ export default async function ArchivePage() {
       </div>
 
       {tasks.length === 0 ? (
-        <p className="text-sm text-slate-500">アーカイブされたタスクはまだありません。</p>
+        <p className="text-sm text-todon-ink-muted">アーカイブされたタスクはまだありません。</p>
       ) : (
         <ul className="space-y-3">
           {tasks.map((task) => (

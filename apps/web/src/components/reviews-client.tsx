@@ -64,18 +64,18 @@ export function ReviewsClient({ initialReviews }: Props) {
         <ul className="space-y-4">
           {reviews.map((review) => (
             <li key={review.id} className="todon-card p-5">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-todon-ink-muted">
                 {review.type === 'team' ? 'チーム' : '個人'}
                 {' · '}
                 {new Date(review.weekStart).toLocaleDateString('ja-JP')} 〜{' '}
                 {new Date(review.weekEnd).toLocaleDateString('ja-JP')}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-100">{review.summary}</p>
+              <p className="mt-2 text-sm leading-relaxed text-todon-ink">{review.summary}</p>
 
               {review.insights.length > 0 ? (
                 <div className="mt-4">
-                  <p className="text-xs font-semibold uppercase text-emerald-600">気づき</p>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-300">
+                  <p className="todon-eyebrow">気づき</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-todon-ink-muted">
                     {review.insights.map((line) => (
                       <li key={line}>{line}</li>
                     ))}
@@ -85,8 +85,8 @@ export function ReviewsClient({ initialReviews }: Props) {
 
               {review.recommendations.length > 0 ? (
                 <div className="mt-4">
-                  <p className="text-xs font-semibold uppercase text-teal-600">来週の提案</p>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-300">
+                  <p className="todon-eyebrow text-todon-mint">来週の提案</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-todon-ink-muted">
                     {review.recommendations.map((line) => (
                       <li key={line}>{line}</li>
                     ))}

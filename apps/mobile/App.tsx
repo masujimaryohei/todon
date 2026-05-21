@@ -5,9 +5,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuthContext } from './src/auth-context';
-import { theme } from './src/theme';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
+import { theme } from './src/theme';
 
 function Router() {
   const { hydrated, token } = useAuthContext();

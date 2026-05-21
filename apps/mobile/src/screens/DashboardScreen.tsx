@@ -61,7 +61,7 @@ export default function DashboardScreen({ navigation }: Props) {
   if (!data) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color="#34d399" />
+        <ActivityIndicator color="#f97316" />
       </View>
     );
   }
@@ -147,30 +147,30 @@ export default function DashboardScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  centered: { flex: 1, backgroundColor: '#020617', alignItems: 'center', justifyContent: 'center' },
-  scroll: { padding: 20, gap: 12, backgroundColor: '#020617' },
-  title: { color: '#f8fafc', fontSize: 24, fontWeight: '700' },
-  sub: { color: '#94a3b8', fontSize: 13 },
+  centered: { flex: 1, backgroundColor: '#fff8f0', alignItems: 'center', justifyContent: 'center' },
+  scroll: { padding: 20, gap: 12, backgroundColor: '#fff8f0' },
+  title: { color: '#3f2f2a', fontSize: 24, fontWeight: '700' },
+  sub: { color: '#78716c', fontSize: 13 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#fed7aa',
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  chipActive: { backgroundColor: '#34d399', borderColor: '#34d399' },
-  chipLabel: { color: '#cbd5f5', fontSize: 12 },
-  chipLabelActive: { color: '#022c22', fontWeight: '700', fontSize: 12 },
+  chipActive: { backgroundColor: '#f97316', borderColor: '#f97316' },
+  chipLabel: { color: '#78716c', fontSize: 12 },
+  chipLabelActive: { color: '#ffffff', fontWeight: '700', fontSize: 12 },
   card: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#065f46',
+    borderColor: '#fed7aa',
     padding: 14,
     backgroundColor: '#052e1f',
     gap: 6,
   },
-  cardEyebrow: { color: '#6ee7b7', fontSize: 11, textTransform: 'uppercase' },
+  cardEyebrow: { color: '#fb923c', fontSize: 11, textTransform: 'uppercase' },
   cardBody: { color: '#ecfdf5', fontSize: 14, lineHeight: 20 },
   navTeams: {
     alignSelf: 'flex-start',
@@ -179,27 +179,27 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#6366f1',
-    backgroundColor: '#1e1b4b33',
+    borderColor: '#c084fc',
+    backgroundColor: '#f3e8ff33',
   },
   navTeamsLabel: {
-    color: '#c7d2fe',
+    color: '#7c3aed',
     fontWeight: '700',
     fontSize: 13,
   },
   teamTaskCard: {
-    borderColor: '#4338ca',
-    backgroundColor: '#1e1b4b44',
+    borderColor: '#c084fc',
+    backgroundColor: '#f3e8ff44',
   },
-  muted: { color: '#64748b', fontSize: 13 },
+  muted: { color: '#78716c', fontSize: 13 },
   taskCard: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: '#fed7aa',
     padding: 12,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     gap: 4,
   },
-  taskTitle: { color: '#f8fafc', fontWeight: '600' },
-  taskHint: { color: '#94a3b8', fontSize: 12 },
+  taskTitle: { color: '#3f2f2a', fontWeight: '600' },
+  taskHint: { color: '#78716c', fontSize: 12 },
 });

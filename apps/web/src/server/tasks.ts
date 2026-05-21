@@ -5,6 +5,7 @@ import { mapSubTask, mapTask } from '@/lib/mappers';
 import { prisma } from '@/lib/prisma';
 
 import { logTaskActivity } from './activity';
+import { notifyTaskDone } from './integrations';
 import { enrichTaskWithPeople, fetchTaskDetail, mapTaskRows, taskInclude } from './task-queries';
 import { buildRepeatCompletionPatch, repeatFieldsFromInput } from './tasks-shared';
 import { requireTaskAccess, requireTaskEdit } from './team-access';
@@ -66,6 +67,8 @@ export async function createTask(
     scope?: 'personal' | 'team';
     teamId?: string | null;
     assigneeId?: string | null;
+    projectId?: string | null;
+    startAt?: Date | null;
   },
 ) {
   if (input.scope === 'team') {
@@ -87,6 +90,13 @@ export async function createTask(
     }
   }
 
+  if (input.projectId) {
+    const project = await prisma.project.findFirst({ where: { id: input.projectId, userId } });
+    if (!project) {
+      throw new ForbiddenError('プロジェクトが見つかりません');
+    }
+  }
+
   const row = await prisma.task.create({
     data: {
       userId,
@@ -100,6 +110,8 @@ export async function createTask(
       urgency: input.urgency ?? 'medium',
       weight: input.weight ?? 'normal',
       categoryId: input.categoryId ?? null,
+      projectId: input.projectId ?? null,
+      startAt: input.startAt ?? null,
       repeatType: repeat.repeatType,
       repeatIntervalDays: repeat.repeatIntervalDays,
       flexibleMinDays: repeat.flexibleMinDays,
@@ -186,6 +198,8 @@ export async function updateTask(
       ...(patch.weight !== undefined ? { weight: patch.weight } : {}),
       ...(patch.categoryId !== undefined ? { categoryId: patch.categoryId } : {}),
       ...(patch.assigneeId !== undefined ? { assigneeId: patch.assigneeId } : {}),
+      ...(patch.projectId !== undefined ? { projectId: patch.projectId } : {}),
+      ...(patch.startAt !== undefined ? { startAt: patch.startAt } : {}),
       ...(patch.archivedAt !== undefined ? { archivedAt: patch.archivedAt } : {}),
       ...(patch.deletedAt !== undefined ? { deletedAt: patch.deletedAt } : {}),
       ...(repeatPatch
@@ -221,7 +235,12 @@ export async function updateTask(
     });
   }
 
-  return enrichTaskWithPeople(row);
+  const result = await enrichTaskWithPeople(row);
+  if (result.status === 'done' && existing.status !== 'done') {
+    void notifyTaskDone(userId, result.title);
+  }
+
+  return result;
 }
 
 export async function archiveTask(userId: string, taskId: string) {

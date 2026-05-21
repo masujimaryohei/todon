@@ -39,6 +39,12 @@ export async function PATCH(req: Request, ctx: RouteCtx) {
       ...parsed,
       dueAt:
         parsed.dueAt !== undefined ? (parsed.dueAt ? new Date(parsed.dueAt) : null) : undefined,
+      startAt:
+        parsed.startAt !== undefined
+          ? parsed.startAt
+            ? new Date(parsed.startAt)
+            : null
+          : undefined,
     });
 
     return NextResponse.json(task);

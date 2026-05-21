@@ -1,22 +1,26 @@
 'use client';
 
-import type { Category, RepeatType, TaskWeight, Team } from '@todon/shared';
+import type { Category, Project, RepeatType, TaskWeight, Team } from '@todon/shared';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { RepeatFields } from '@/components/repeat-fields';
+import { VoiceInputButton } from '@/components/voice-input-button';
 
 type Props = {
   categories: Category[];
   teams: Team[];
+  projects: Project[];
 };
 
-export function NewTaskForm({ categories, teams }: Props) {
+export function NewTaskForm({ categories, teams, projects }: Props) {
   const searchParams = useSearchParams();
   const initialTeamId = searchParams.get('teamId') ?? '';
+  const initialProjectId = searchParams.get('projectId') ?? '';
+  const initialTitle = searchParams.get('title') ?? '';
   const router = useRouter();
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState('');
   const [dueType, setDueType] = useState<'none' | 'datetime' | 'anytime'>('none');
   const [dueAt, setDueAt] = useState('');
@@ -32,6 +36,11 @@ export function NewTaskForm({ categories, teams }: Props) {
   const [teamId, setTeamId] = useState(initialTeamId);
   const [assigneeId, setAssigneeId] = useState('');
   const [teamMembers, setTeamMembers] = useState<{ userId: string; label: string }[]>([]);
+  const [projectId, setProjectId] = useState(initialProjectId);
+  const [startAt, setStartAt] = useState('');
+  const [categoryHint, setCategoryHint] = useState<string | null>(null);
+  const [subtaskHints, setSubtaskHints] = useState<string[]>([]);
+  const [applySubtasks, setApplySubtasks] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -115,6 +124,8 @@ export function NewTaskForm({ categories, teams }: Props) {
           weight,
           scope,
           ...(scope === 'team' ? { teamId, assigneeId: assigneeId || undefined } : {}),
+          ...(scope === 'personal' && projectId ? { projectId } : {}),
+          ...(startAt ? { startAt: new Date(startAt).toISOString() } : {}),
           categoryId: categoryId || undefined,
           dueType: repeatType === 'flexible' ? 'flexible' : duePayload.dueType,
           ...(duePayload.dueAt ? { dueAt: duePayload.dueAt } : {}),
@@ -129,7 +140,20 @@ export function NewTaskForm({ categories, teams }: Props) {
         throw new Error((body as { message?: string }).message ?? '作成に失敗しました');
       }
 
-      const task = await res.json();
+      const task = (await res.json()) as { id: string };
+
+      if (applySubtasks && subtaskHints.length > 0) {
+        await Promise.all(
+          subtaskHints.map((st) =>
+            fetch(`/api/tasks/${task.id}/subtasks`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ title: st }),
+            }),
+          ),
+        );
+      }
 
       router.push(`/tasks/${task.id}`);
       router.refresh();
@@ -143,17 +167,72 @@ export function NewTaskForm({ categories, teams }: Props) {
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="space-y-6 todon-card p-6">
       <div className="space-y-2">
-        <label className="text-sm text-slate-200">タイトル（必須）</label>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <label className="todon-label">タイトル（必須）</label>
+          <div className="flex gap-2">
+            <VoiceInputButton onText={(text) => setTitle((prev) => (prev ? `${prev} ${text}` : text))} />
+            <button
+              type="button"
+              className="todon-btn-ghost text-xs"
+              onClick={() => {
+                void fetch(`/api/tasks/suggest-category?title=${encodeURIComponent(title)}`, {
+                  credentials: 'include',
+                })
+                  .then((r) => r.json())
+                  .then((body: { name: string; reason: string }) => {
+                    setCategoryHint(`${body.name}（${body.reason}）`);
+                    const match = categories.find((c) => c.name === body.name);
+                    if (match) {
+                      setCategoryId(match.id);
+                    }
+                  });
+              }}
+            >
+              カテゴリ推定
+            </button>
+            <button
+              type="button"
+              className="todon-btn-ghost text-xs"
+              onClick={() => {
+                void fetch('/api/tasks/suggest-subtasks', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({ title }),
+                })
+                  .then((r) => r.json())
+                  .then((body: { suggestions: string[] }) => setSubtaskHints(body.suggestions ?? []));
+              }}
+            >
+              サブタスク案
+            </button>
+          </div>
+        </div>
         <input
           className="todon-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+        {categoryHint ? <p className="text-xs text-todon-ink-muted">推定: {categoryHint}</p> : null}
+        {subtaskHints.length > 0 ? (
+          <div className="rounded-lg border border-todon-border bg-todon-yellow-soft/50 p-3 text-sm">
+            <p className="font-bold text-todon-ink">サブタスク案</p>
+            <ul className="mt-1 list-disc pl-5 text-todon-ink-muted">
+              {subtaskHints.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+            <label className="mt-2 flex items-center gap-2 text-xs">
+              <input type="checkbox" checked={applySubtasks} onChange={(e) => setApplySubtasks(e.target.checked)} />
+              作成時にサブタスクとして追加する
+            </label>
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm text-slate-200">詳細</label>
+        <label className="todon-label">詳細</label>
         <textarea
           className="todon-input"
           rows={4}
@@ -164,7 +243,7 @@ export function NewTaskForm({ categories, teams }: Props) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">スコープ</label>
+          <label className="todon-label">スコープ</label>
           <select
             className="todon-input"
             value={scope}
@@ -186,7 +265,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         {scope === 'team' ? (
           <>
             <div className="space-y-2">
-              <label className="text-sm text-slate-200">チーム</label>
+              <label className="todon-label">チーム</label>
               <select
                 className="todon-input"
                 value={teamId}
@@ -205,7 +284,7 @@ export function NewTaskForm({ categories, teams }: Props) {
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-slate-200">担当者（任意）</label>
+              <label className="todon-label">担当者（任意）</label>
               <select
                 className="todon-input"
                 value={assigneeId}
@@ -222,8 +301,36 @@ export function NewTaskForm({ categories, teams }: Props) {
           </>
         ) : null}
 
+        {scope === 'personal' && projects.length > 0 ? (
+          <div className="space-y-2">
+            <label className="todon-label">プロジェクト</label>
+            <select
+              className="todon-input"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+            >
+              <option value="">なし</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">期日タイプ</label>
+          <label className="todon-label">開始日時（ガント用・任意）</label>
+          <input
+            type="datetime-local"
+            className="todon-input"
+            value={startAt}
+            onChange={(e) => setStartAt(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="todon-label">期日タイプ</label>
           <select
             className="todon-input"
             value={dueType}
@@ -237,7 +344,7 @@ export function NewTaskForm({ categories, teams }: Props) {
 
         {dueType === 'datetime' ? (
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">期限</label>
+            <label className="todon-label">期限</label>
             <input
               type="datetime-local"
               className="todon-input"
@@ -248,7 +355,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         ) : null}
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">カテゴリ</label>
+          <label className="todon-label">カテゴリ</label>
           <select
             className="todon-input"
             value={categoryId}
@@ -264,7 +371,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">重要度</label>
+          <label className="todon-label">重要度</label>
           <select
             className="todon-input"
             value={importance}
@@ -277,7 +384,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">緊急度</label>
+          <label className="todon-label">緊急度</label>
           <select
             className="todon-input"
             value={urgency}
@@ -290,7 +397,7 @@ export function NewTaskForm({ categories, teams }: Props) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">タスクの重さ</label>
+          <label className="todon-label">タスクの重さ</label>
           <select
             className="todon-input"
             value={weight}

@@ -24,11 +24,11 @@ export function RepeatFields({
   onFlexibleMaxDaysChange,
 }: Props) {
   return (
-    <div className="space-y-3 rounded-lg border border-slate-800 bg-slate-950/60 p-4">
-      <p className="text-sm font-medium text-emerald-200">リピート（v1.5）</p>
+    <div className="space-y-3 todon-card p-4">
+      <p className="text-sm font-bold text-todon-primary">リピート 🔁</p>
 
       <div className="space-y-2">
-        <label className="text-sm text-slate-200">種別</label>
+        <label className="todon-label">種別</label>
         <select
           className="todon-input"
           value={repeatType}
@@ -42,7 +42,7 @@ export function RepeatFields({
 
       {repeatType === 'fixed' ? (
         <div className="space-y-2">
-          <label className="text-sm text-slate-200">間隔（日）</label>
+          <label className="todon-label">間隔（日）</label>
           <input
             type="number"
             min={1}
@@ -57,7 +57,7 @@ export function RepeatFields({
       {repeatType === 'flexible' ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">最短（日）</label>
+            <label className="todon-label">最短（日）</label>
             <input
               type="number"
               min={1}
@@ -68,7 +68,7 @@ export function RepeatFields({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm text-slate-200">最長（日）</label>
+            <label className="todon-label">最長（日）</label>
             <input
               type="number"
               min={1}

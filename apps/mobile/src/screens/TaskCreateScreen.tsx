@@ -197,7 +197,7 @@ export default function TaskCreateScreen({ navigation }: Props) {
       <TextInput
         placeholder="どんなひとつのタスクでもOK"
         style={styles.input}
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor="#78716c"
         value={title}
         onChangeText={setTitle}
       />
@@ -207,7 +207,7 @@ export default function TaskCreateScreen({ navigation }: Props) {
         placeholder="メモ / URL / メンバーへの共有内容"
         multiline
         style={[styles.input, styles.multiline]}
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor="#78716c"
         value={description}
         onChangeText={setDescription}
       />
@@ -226,7 +226,7 @@ export default function TaskCreateScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
     padding: 20,
     gap: 8,
   },
@@ -239,27 +239,27 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#fed7aa',
     paddingVertical: 10,
     alignItems: 'center',
   },
   scopeChipOn: {
-    borderColor: '#6366f1',
-    backgroundColor: '#312e8177',
+    borderColor: '#c084fc',
+    backgroundColor: '#e9d5ff77',
   },
-  scopeLabel: { color: '#94a3b8', fontWeight: '700' },
-  scopeLabelOn: { color: '#c7d2fe' },
+  scopeLabel: { color: '#78716c', fontWeight: '700' },
+  scopeLabelOn: { color: '#7c3aed' },
   section: {
     marginBottom: 8,
     gap: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#312e8188',
+    borderColor: '#e9d5ff88',
     padding: 12,
-    backgroundColor: '#0f172acc',
+    backgroundColor: '#ffffffcc',
   },
   sectionEyebrow: {
-    color: '#a5b4fc',
+    color: '#7c3aed',
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 2,
@@ -268,17 +268,17 @@ const styles = StyleSheet.create({
   teamPick: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#475569',
+    borderColor: '#78716c',
     paddingVertical: 10,
     paddingHorizontal: 12,
   },
   teamPickOn: {
-    borderColor: '#818cf8',
-    backgroundColor: '#1e1b4b77',
+    borderColor: '#c084fc',
+    backgroundColor: '#f3e8ff77',
   },
-  teamPickLabel: { color: '#e2e8f0', fontWeight: '600' },
+  teamPickLabel: { color: '#3f2f2a', fontWeight: '600' },
   label: {
-    color: '#a7f3d0',
+    color: '#78716c',
     fontWeight: '600',
     fontSize: 12,
     textTransform: 'uppercase',
@@ -290,12 +290,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#065f4699',
-    backgroundColor: '#0f172a',
+    borderColor: '#fed7aa99',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 14,
     paddingVertical: Platform.select({ ios: 14, android: 10 }),
     fontSize: 16,
-    color: '#f8fafc',
+    color: '#3f2f2a',
   },
   multiline: {
     minHeight: 120,
@@ -303,13 +303,13 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 24,
-    backgroundColor: '#34d399',
+    backgroundColor: '#f97316',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
   buttonLabel: {
-    color: '#022c22',
+    color: '#ffffff',
     fontWeight: '700',
     fontSize: 16,
   },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   cancelLabel: {
-    color: '#cbd5f5',
+    color: '#78716c',
     fontSize: 15,
     fontWeight: '600',
   },

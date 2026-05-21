@@ -1,16 +1,24 @@
 import type { CapacityLevel } from './capacity';
+import type { CategorySuggestion } from './classify-category';
 import type {
   AuthResponse,
+  CalendarDay,
   Category,
   DashboardPayload,
+  GanttItem,
+  Habit,
+  Project,
   Task,
   TaskActivityLog,
   TaskComment,
+  TaskTemplate,
+  TaskTemplatePayload,
   TaskWithPeople,
   Team,
   TeamInvite,
   TeamMember,
   User,
+  UserSettings,
   WeeklyReview,
 } from './types';
 
@@ -249,5 +257,77 @@ export class TodoNApiClient {
 
   listTaskActivity(taskId: string) {
     return this.request<TaskActivityLog[]>(`/api/tasks/${taskId}/activity`);
+  }
+
+  getSettings() {
+    return this.request<UserSettings>('/api/settings');
+  }
+
+  updateSettings(body: Partial<UserSettings>) {
+    return this.request<UserSettings>('/api/settings', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+  }
+
+  listProjects() {
+    return this.request<Project[]>('/api/projects');
+  }
+
+  createProject(body: { name: string; description?: string; color?: string }) {
+    return this.request<Project>('/api/projects', { method: 'POST', body: JSON.stringify(body) });
+  }
+
+  getProject(id: string) {
+    return this.request<Project & { tasks: Task[] }>(`/api/projects/${id}`);
+  }
+
+  listTemplates() {
+    return this.request<TaskTemplate[]>('/api/templates');
+  }
+
+  createTemplate(body: { name: string; payload: TaskTemplatePayload }) {
+    return this.request<TaskTemplate>('/api/templates', { method: 'POST', body: JSON.stringify(body) });
+  }
+
+  deleteTemplate(id: string) {
+    return this.request<void>(`/api/templates/${id}`, { method: 'DELETE' });
+  }
+
+  listHabits() {
+    return this.request<Habit[]>('/api/habits');
+  }
+
+  createHabit(body: { title: string; targetPerWeek?: number; color?: string }) {
+    return this.request<Habit>('/api/habits', { method: 'POST', body: JSON.stringify(body) });
+  }
+
+  toggleHabitLog(habitId: string, day: string) {
+    return this.request<{ completed: boolean }>(`/api/habits/${habitId}/log`, {
+      method: 'POST',
+      body: JSON.stringify({ day }),
+    });
+  }
+
+  getCalendar(start: string, end: string) {
+    const q = new URLSearchParams({ start, end });
+    return this.request<CalendarDay[]>(`/api/calendar?${q.toString()}`);
+  }
+
+  getGantt(start: string, end: string) {
+    const q = new URLSearchParams({ start, end });
+    return this.request<GanttItem[]>(`/api/gantt?${q.toString()}`);
+  }
+
+  suggestCategory(title: string) {
+    const q = new URLSearchParams({ title });
+    return this.request<CategorySuggestion>(`/api/tasks/suggest-category?${q.toString()}`);
+  }
+
+  suggestSubtasks(title: string) {
+    return this.request<{ suggestions: string[] }>('/api/tasks/suggest-subtasks', {
+      method: 'POST',
+      body: JSON.stringify({ title }),
+    });
   }
 }

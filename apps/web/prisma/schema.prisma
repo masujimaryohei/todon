@@ -23,6 +23,10 @@ model User {
   comments      TaskComment[]
   activities    TaskActivityLog[]
   invitesSent   TeamInvite[]   @relation("InviteSender")
+  settings      UserSettings?
+  projects      Project[]
+  templates     TaskTemplate[]
+  habits        Habit[]
 }
 
 model Team {
@@ -109,6 +113,10 @@ model Task {
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  startAt   DateTime?
+
   weight String @default("normal")
 
   archivedAt DateTime?
@@ -166,6 +174,70 @@ model DayCapacity {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, day])
+}
+
+model UserSettings {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notifyOnDueToday    Boolean @default(true)
+  notifyOnTaskDone    Boolean @default(true)
+  notifyOnTeamAssign  Boolean @default(true)
+  slackWebhookUrl     String?
+  discordWebhookUrl   String?
+  googleCalendarLinked Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  color       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tasks       Task[]
+
+  @@unique([userId, name])
+}
+
+model TaskTemplate {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  payloadJson String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+}
+
+model Habit {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  targetPerWeek Int        @default(3)
+  color         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  logs          HabitLog[]
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  day       String
+  completed Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, day])
 }
 
 model WeeklyReview {

@@ -139,7 +139,7 @@ export default function TaskListScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 12,
@@ -153,41 +153,41 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   teamShortcut: {
-    color: '#a5b4fc',
+    color: '#7c3aed',
     fontWeight: '700',
     marginBottom: 6,
     fontSize: 14,
   },
   eyebrow: {
     letterSpacing: 6,
-    color: '#059669',
+    color: '#f97316',
     fontSize: 11,
     textTransform: 'uppercase',
   },
   title: {
     marginTop: 4,
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontSize: 22,
     fontWeight: '600',
   },
   note: {
     marginTop: 4,
-    color: '#475569',
+    color: '#78716c',
     fontSize: 12,
   },
   logout: {
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#10b981',
+    borderColor: '#f97316',
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   logoutLabel: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontWeight: '600',
   },
   navLink: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontWeight: '600',
     fontSize: 14,
     paddingHorizontal: 8,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   plusLabel: {
-    color: '#34d399',
+    color: '#f97316',
     fontSize: 28,
     fontWeight: '700',
     lineHeight: 32,
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
   empty: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#065f46',
+    borderColor: '#fed7aa',
     paddingVertical: 32,
     paddingHorizontal: 16,
-    backgroundColor: '#031525',
+    backgroundColor: '',
     alignItems: 'center',
     gap: 8,
   },
@@ -229,17 +229,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   emptyBody: {
-    color: '#cbd5f5',
+    color: '#78716c',
     fontSize: 14,
     textAlign: 'center',
   },
   card: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#065f46',
+    borderColor: '#fed7aa',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     gap: 6,
   },
   cardHeader: {
@@ -251,18 +251,18 @@ const styles = StyleSheet.create({
   cardTitle: {
     flex: 1,
     fontSize: 16,
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontWeight: '600',
   },
   cardStatus: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontWeight: '600',
     textTransform: 'uppercase',
     fontSize: 11,
     letterSpacing: 1,
   },
   cardHint: {
-    color: '#94a3b8',
+    color: '#78716c',
     fontSize: 12,
   },
 });

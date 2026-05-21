@@ -36,7 +36,7 @@ export default function TeamCreateScreen({ navigation }: Props) {
       <TextInput
         style={styles.input}
         placeholder="例: プロダクト A"
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor="#78716c"
         value={name}
         onChangeText={setName}
         maxLength={64}
@@ -60,34 +60,34 @@ export default function TeamCreateScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
     padding: 20,
     gap: 8,
   },
-  label: { color: '#a5b4fc', fontWeight: '600', fontSize: 12, textTransform: 'uppercase' },
+  label: { color: '#7c3aed', fontWeight: '600', fontSize: 12, textTransform: 'uppercase' },
   input: {
     marginTop: 8,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#3730a399',
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 14,
     paddingVertical: Platform.select({ ios: 14, android: 10 }),
     fontSize: 16,
-    color: '#f8fafc',
+    color: '#3f2f2a',
   },
   button: {
     marginTop: 24,
-    backgroundColor: '#6366f1',
+    backgroundColor: '#c084fc',
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  buttonLabel: { color: '#eef2ff', fontWeight: '700', fontSize: 16 },
+  buttonLabel: { color: '#ffffff', fontWeight: '700', fontSize: 16 },
   disabled: { opacity: 0.65 },
   cancel: {
     marginTop: 16,
     alignItems: 'center',
   },
-  cancelLabel: { color: '#94a3b8', fontWeight: '600' },
+  cancelLabel: { color: '#78716c', fontWeight: '600' },
 });

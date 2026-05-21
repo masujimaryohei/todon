@@ -34,6 +34,8 @@ export type Task = {
   importance: PriorityLevel;
   urgency: PriorityLevel;
   categoryId?: string | null;
+  projectId?: string | null;
+  startAt?: string | null;
   weight: TaskWeight;
   archivedAt?: string | null;
   deletedAt?: string | null;
@@ -41,6 +43,7 @@ export type Task = {
   updatedAt: string;
   subtasks?: SubTask[];
   category?: Category | null;
+  project?: Project | null;
 };
 
 export type FlexibleTaskView = Task & {
@@ -149,6 +152,79 @@ export type DashboardPayload = {
   capacity: CapacityLevel;
   aiSuggestion: string;
   notificationCandidates: Task[];
+};
+
+export type Project = {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string | null;
+  color?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  taskCount?: number;
+};
+
+export type TaskTemplatePayload = {
+  title: string;
+  description?: string | null;
+  importance?: PriorityLevel;
+  urgency?: PriorityLevel;
+  weight?: TaskWeight;
+  dueType?: DueType;
+  repeatType?: RepeatType;
+  categoryName?: string | null;
+};
+
+export type TaskTemplate = {
+  id: string;
+  userId: string;
+  name: string;
+  payload: TaskTemplatePayload;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UserSettings = {
+  userId: string;
+  notifyOnDueToday: boolean;
+  notifyOnTaskDone: boolean;
+  notifyOnTeamAssign: boolean;
+  slackWebhookUrl?: string | null;
+  discordWebhookUrl?: string | null;
+  googleCalendarLinked: boolean;
+};
+
+export type Habit = {
+  id: string;
+  userId: string;
+  title: string;
+  targetPerWeek: number;
+  color?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  weekDoneCount?: number;
+};
+
+export type HabitLog = {
+  id: string;
+  habitId: string;
+  day: string;
+  completed: boolean;
+};
+
+export type CalendarDay = {
+  date: string;
+  tasks: Task[];
+};
+
+export type GanttItem = {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  status: TaskStatus;
+  projectName?: string | null;
 };
 
 export type WeeklyReview = {

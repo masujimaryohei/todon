@@ -28,12 +28,12 @@ export default async function TeamsPage() {
       </div>
 
       {invites.length > 0 ? (
-        <section className="rounded-xl border border-amber-800/50 bg-amber-950/20 p-4">
+        <section className="todon-card todon-card-yellow p-4">
           <h2 className="text-sm font-semibold text-amber-200">保留中の招待</h2>
           <ul className="mt-3 space-y-2">
             {invites.map((invite) => (
               <li key={invite.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                <span className="text-slate-200">
+                <span className="text-todon-ink">
                   {invite.teamName} への招待（{invite.email}）
                 </span>
                 <Link
@@ -56,10 +56,10 @@ export default async function TeamsPage() {
             <li key={team.id}>
               <Link
                 href={`/teams/${team.id}`}
-                className="block todon-card p-5 transition hover:border-emerald-600/50"
+                className="block todon-card p-5 transition hover:border-todon-sky"
               >
-                <h2 className="text-lg font-semibold text-white">{team.name}</h2>
-                <p className="mt-1 text-xs text-slate-400">
+                <h2 className="text-lg font-extrabold text-todon-ink">{team.name}</h2>
+                <p className="mt-1 text-xs text-todon-ink-muted">
                   あなたのロール: {team.myRole} / メンバー {team.memberCount ?? 1} 人
                 </p>
               </Link>

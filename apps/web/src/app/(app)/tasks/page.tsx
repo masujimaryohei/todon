@@ -14,12 +14,12 @@ function TaskRow({ task }: { task: Task }) {
       >
         <div className="flex-1 space-y-1">
           <div className="flex items-center gap-2">
-            <p className="font-medium text-slate-50">{task.title}</p>
+            <p className="font-bold text-todon-ink">{task.title}</p>
             <span className="rounded-full bg-emerald-900/50 px-2 py-0.5 text-[10px] uppercase text-emerald-200">
               {task.status}
             </span>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-todon-ink-muted">
             {task.importance}/{task.urgency} / {task.weight}
             {task.category ? ` / ${task.category.name}` : ''}
           </p>
@@ -27,7 +27,7 @@ function TaskRow({ task }: { task: Task }) {
         {task.dueAt ? (
           <p className="text-xs text-emerald-200">{new Date(task.dueAt).toLocaleString('ja-JP')}</p>
         ) : (
-          <p className="text-xs text-slate-500">期限なし</p>
+          <p className="text-xs text-todon-ink-muted">期限なし</p>
         )}
       </Link>
     </li>

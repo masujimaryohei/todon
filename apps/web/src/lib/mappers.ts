@@ -1,5 +1,6 @@
 import type {
   Category as PrismaCategory,
+  Project as PrismaProject,
   SubTask as PrismaSubTask,
   Task as PrismaTask,
   User as PrismaUser,
@@ -8,6 +9,7 @@ import type {
   Category,
   DueType,
   PriorityLevel,
+  Project,
   RepeatType,
   SubTask,
   Task,
@@ -54,7 +56,25 @@ export function mapSubTask(row: PrismaSubTask): SubTask {
   };
 }
 
-export function mapTask(row: PrismaTask & { category?: PrismaCategory | null; subtasks?: PrismaSubTask[] }): Task {
+export function mapProject(row: PrismaProject): Project {
+  return {
+    id: row.id,
+    userId: row.userId,
+    name: row.name,
+    description: row.description,
+    color: row.color,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+export function mapTask(
+  row: PrismaTask & {
+    category?: PrismaCategory | null;
+    project?: PrismaProject | null;
+    subtasks?: PrismaSubTask[];
+  },
+): Task {
   return {
     id: row.id,
     title: row.title,
@@ -75,12 +95,15 @@ export function mapTask(row: PrismaTask & { category?: PrismaCategory | null; su
     importance: row.importance as PriorityLevel,
     urgency: row.urgency as PriorityLevel,
     categoryId: row.categoryId,
+    projectId: row.projectId,
+    startAt: toIso(row.startAt),
     weight: row.weight as TaskWeight,
     archivedAt: toIso(row.archivedAt),
     deletedAt: toIso(row.deletedAt),
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     category: row.category ? mapCategory(row.category) : null,
+    project: row.project ? mapProject(row.project) : null,
     subtasks: row.subtasks?.map(mapSubTask),
   };
 }

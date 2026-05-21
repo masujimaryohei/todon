@@ -193,7 +193,7 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
   if (loading || !task) {
     return (
       <View style={[styles.flexCenter, styles.page]}>
-        <ActivityIndicator color="#34d399" />
+        <ActivityIndicator color="#f97316" />
       </View>
     );
   }
@@ -282,7 +282,7 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
           <TextInput
             style={styles.commentInput}
             placeholder="コメントを書く"
-            placeholderTextColor="#64748b"
+            placeholderTextColor="#78716c"
             value={commentBody}
             onChangeText={setCommentBody}
             multiline
@@ -362,7 +362,7 @@ export default function TaskDetailScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
   },
   flexCenter: {
     alignItems: 'center',
@@ -371,18 +371,18 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 20,
     paddingBottom: 40,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
     gap: 16,
   },
   title: {
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontSize: 26,
     fontWeight: '600',
     lineHeight: 32,
   },
   subtitle: {
     marginTop: 4,
-    color: '#cbd5f5',
+    color: '#78716c',
     fontSize: 13,
     lineHeight: 18,
   },
@@ -392,14 +392,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#4338ca',
+    borderColor: '#c084fc',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#1e1b4b44',
+    backgroundColor: '#f3e8ff44',
     gap: 8,
   },
-  teamBannerText: { color: '#c7d2fe', fontWeight: '700', fontSize: 13 },
-  teamBannerLink: { color: '#a5b4fc', fontWeight: '700' },
+  teamBannerText: { color: '#7c3aed', fontWeight: '700', fontSize: 13 },
+  teamBannerLink: { color: '#7c3aed', fontWeight: '700' },
   actions: {
     gap: 10,
     marginTop: 4,
@@ -409,14 +409,14 @@ const styles = StyleSheet.create({
   primaryBtn: {
     flexGrow: 1,
     flexBasis: '45%',
-    backgroundColor: '#34d399',
+    backgroundColor: '#f97316',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 12,
     alignItems: 'center',
   },
   primaryLabel: {
-    color: '#022c22',
+    color: '#ffffff',
     fontWeight: '700',
   },
   secondaryBtn: {
@@ -424,53 +424,53 @@ const styles = StyleSheet.create({
     flexBasis: '45%',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#fcd34d',
+    borderColor: '#fbbf24',
     paddingVertical: 12,
     paddingHorizontal: 12,
     alignItems: 'center',
   },
   secondaryLabel: {
-    color: '#fcd34d',
+    color: '#fbbf24',
     fontWeight: '600',
   },
   progress: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontWeight: '600',
   },
   section: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#065f46',
+    borderColor: '#fed7aa',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     gap: 10,
   },
   sectionEyebrow: {
-    color: '#6ee7b7',
+    color: '#fb923c',
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 3,
     fontSize: 11,
   },
   miniLabel: {
-    color: '#94a3b8',
+    color: '#78716c',
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   body: {
-    color: '#e2e8f0',
+    color: '#3f2f2a',
     fontSize: 15,
     lineHeight: 22,
   },
   bodyMuted: {
-    color: '#64748b',
+    color: '#78716c',
     fontSize: 13,
   },
   meta: {
-    color: '#94a3b8',
+    color: '#78716c',
     fontSize: 13,
     lineHeight: 18,
   },
@@ -483,88 +483,88 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     gap: 4,
-    borderColor: '#1e293b',
+    borderColor: '#fed7aa',
     marginBottom: 8,
-    backgroundColor: '#020617',
+    backgroundColor: '#fff8f0',
   },
   badgeDone: {
-    borderColor: '#04785740',
-    backgroundColor: '#022c2299',
+    borderColor: '#bbf7d0',
+    backgroundColor: '#ffffff99',
     opacity: 0.85,
   },
   badgeOpen: {
-    borderColor: '#065f46',
-    backgroundColor: '#031525bb',
+    borderColor: '#fed7aa',
+    backgroundColor: '',
   },
   badgeLabel: {
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontWeight: '600',
   },
   badgeHint: {
-    color: '#94a3b8',
+    color: '#78716c',
     fontSize: 12,
     fontWeight: '500',
   },
   strikeLabel: {
     textDecorationLine: 'line-through',
-    color: '#a7f3d0aa',
+    color: '#78716caa',
   },
   assignRow: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#fed7aa',
     paddingVertical: 8,
     paddingHorizontal: 10,
     marginTop: 6,
   },
   assignRowOn: {
-    borderColor: '#818cf8',
-    backgroundColor: '#1e1b4b55',
+    borderColor: '#c084fc',
+    backgroundColor: '#f3e8ff55',
   },
-  assignText: { color: '#e2e8f0', fontWeight: '600' },
+  assignText: { color: '#3f2f2a', fontWeight: '600' },
   assignSubmit: {
     marginTop: 10,
     borderRadius: 8,
-    backgroundColor: '#4338ca',
+    backgroundColor: '#c084fc',
     paddingVertical: 10,
     alignItems: 'center',
   },
-  assignSubmitLabel: { color: '#eef2ff', fontWeight: '700', fontSize: 13 },
+  assignSubmitLabel: { color: '#ffffff', fontWeight: '700', fontSize: 13 },
   opacityDim: { opacity: 0.55 },
   commentBox: {
     marginTop: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#fed7aa',
     padding: 10,
     gap: 4,
   },
-  commentMeta: { color: '#64748b', fontSize: 11 },
-  commentBody: { color: '#e2e8f0', fontSize: 14, lineHeight: 20 },
+  commentMeta: { color: '#78716c', fontSize: 11 },
+  commentBody: { color: '#3f2f2a', fontSize: 14, lineHeight: 20 },
   commentInput: {
     marginTop: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#475569',
+    borderColor: '#78716c',
     padding: 12,
     minHeight: 72,
     textAlignVertical: 'top',
-    color: '#f8fafc',
+    color: '#3f2f2a',
     fontSize: 14,
   },
   commentBtn: {
     marginTop: 8,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#fff7ed',
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
   },
   commentBtnLabel: {
-    color: '#0f172a',
+    color: '#ffffff',
     fontWeight: '700',
   },
   activityLine: {
-    color: '#94a3b8',
+    color: '#78716c',
     fontSize: 12,
     marginTop: 6,
     lineHeight: 18,
