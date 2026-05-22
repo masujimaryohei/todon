@@ -34,10 +34,10 @@ export function CapacitySelector({ initial }: Props) {
   }
 
   return (
-    <div className="todon-card todon-card-sky p-4">
+    <div className="todon-section p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="todon-eyebrow">今日のキャパシティ</p>
+          <p className="todon-section-label">今日のキャパシティ</p>
           <p className="text-sm text-todon-ink-muted">だいたいリピートの表示量を、気分に合わせて調整</p>
         </div>
         {saving ? <span className="text-xs font-bold text-todon-ink-muted">保存中…</span> : null}
@@ -50,8 +50,8 @@ export function CapacitySelector({ initial }: Props) {
             onClick={() => void onChange(item)}
             className={`rounded-full px-4 py-2 text-sm font-bold transition ${
               level === item
-                ? 'bg-todon-primary text-white shadow-md'
-                : 'border-2 border-todon-border bg-white text-todon-ink-muted hover:border-todon-sky hover:bg-todon-sky-soft'
+                ? 'bg-todon-primary text-white'
+                : 'border border-stone-200 bg-white text-todon-ink-muted hover:border-stone-300 hover:bg-stone-50'
             }`}
           >
             {CAPACITY_LABELS[item]}

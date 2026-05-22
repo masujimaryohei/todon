@@ -118,6 +118,27 @@ body {
   box-shadow: var(--todon-shadow);
 }
 
+/** ダッシュボード等の補助ブロック（色を抑えた枠） */
+.todon-section {
+  border-radius: 1.25rem;
+  border: 1px solid #e7e5e4;
+  background: var(--todon-surface);
+  box-shadow: 0 1px 3px rgba(63, 47, 42, 0.06);
+}
+
+.todon-section-header {
+  border-bottom: 1px solid #f5f5f4;
+  background: #fafaf9;
+}
+
+.todon-section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--todon-ink-muted);
+}
+
 .todon-card-sky {
   border-color: #bae6fd;
   background: linear-gradient(145deg, #ffffff 0%, var(--todon-sky-soft) 100%);

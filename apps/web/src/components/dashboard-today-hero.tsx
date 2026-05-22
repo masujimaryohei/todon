@@ -42,9 +42,9 @@ export function DashboardTodayHero({ dateLabel, dayKey, timeZone, capacity, prog
   }
 
   return (
-    <section className="todon-card todon-card-sky overflow-hidden p-0">
-      <div className="border-b border-sky-200/80 bg-gradient-to-br from-white to-todon-sky-soft px-5 py-4">
-        <p className="todon-eyebrow">本日</p>
+    <section className="todon-section overflow-hidden p-0">
+      <div className="todon-section-header px-5 py-4">
+        <p className="todon-section-label">本日</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-2xl font-extrabold tracking-tight text-todon-ink">{dateLabel}</p>
@@ -52,7 +52,7 @@ export function DashboardTodayHero({ dateLabel, dayKey, timeZone, capacity, prog
           </div>
           <div className="text-right">
             <p className="text-[11px] font-bold uppercase tracking-wider text-todon-ink-muted">現在時刻</p>
-            <p className="font-mono text-3xl font-extrabold tabular-nums text-todon-sky" suppressHydrationWarning>
+            <p className="font-mono text-3xl font-extrabold tabular-nums text-todon-ink" suppressHydrationWarning>
               {now ? formatClock(now, timeZone) : '--:--:--'}
             </p>
             <p className="text-[11px] text-todon-ink-muted">{timeZone}</p>
@@ -77,7 +77,7 @@ export function DashboardTodayHero({ dateLabel, dayKey, timeZone, capacity, prog
         </div>
 
         <div
-          className="h-4 overflow-hidden rounded-full border-2 border-todon-border bg-white"
+          className="h-3 overflow-hidden rounded-full bg-stone-100"
           role="progressbar"
           aria-valuenow={percent}
           aria-valuemin={0}
@@ -86,7 +86,7 @@ export function DashboardTodayHero({ dateLabel, dayKey, timeZone, capacity, prog
         >
           <div
             className={`h-full rounded-full transition-[width] duration-500 ease-out ${
-              allDone ? 'bg-gradient-to-r from-todon-mint to-todon-sky' : 'bg-gradient-to-r from-todon-primary to-todon-yellow'
+              allDone ? 'bg-todon-mint' : 'bg-todon-primary'
             }`}
             style={{ width: `${percent}%` }}
           />
