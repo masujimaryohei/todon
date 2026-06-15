@@ -138,6 +138,8 @@ export async function updateTask(
     weight: string;
     categoryId: string | null;
     assigneeId: string | null;
+    projectId?: string | null;
+    startAt?: Date | null;
     repeatType?: string;
     repeatIntervalDays?: number | null;
     flexibleMinDays?: number | null;
