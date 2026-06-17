@@ -1,4 +1,5 @@
 import { AppHeader } from '@/components/app-header';
+import { ScopeSwitcher } from '@/components/scope-switcher';
 
 export default function AppGroupLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,8 +9,9 @@ export default function AppGroupLayout({ children }: { children: React.ReactNode
         <div className="todon-blob todon-blob-sky" />
         <div className="todon-blob todon-blob-yellow" />
       </div>
+      <ScopeSwitcher />
       <AppHeader />
-      <main className="relative mx-auto w-full max-w-5xl px-4 py-8">{children}</main>
+      <main className="relative mx-auto w-full max-w-5xl px-4 py-8 pl-12 sm:pl-14">{children}</main>
     </div>
   );
 }

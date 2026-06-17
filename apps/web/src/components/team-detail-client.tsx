@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { TEAM_ICON_PRESETS } from '@/components/scope-switcher';
+import { teamDisplayIcon, writeAppScope } from '@/lib/scope-preferences';
+
 type Props = {
   team: Team;
   members: TeamMember[];
@@ -18,6 +21,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
   const [members, setMembers] = useState(initialMembers);
   const [tasks] = useState(initialTasks);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [teamIcon, setTeamIcon] = useState(team.icon ?? '');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,6 +69,45 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
     }
   }
 
+  async function onSaveIcon(nextIcon: string) {
+    if (!canAdmin) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const res = await fetch(`/api/teams/${team.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ icon: nextIcon || null }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as { message?: string }).message ?? 'アイコンの更新に失敗しました');
+      }
+
+      const updated = (await res.json()) as Team;
+      setTeamIcon(updated.icon ?? '');
+      writeAppScope({
+        mode: 'team',
+        teamId: team.id,
+        teamName: team.name,
+        teamIcon: updated.icon,
+      });
+      setMessage('チームアイコンを更新しました');
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'アイコンの更新に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function onTeamReview() {
     setLoading(true);
     setError(null);
@@ -95,7 +138,12 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="todon-eyebrow">v2 · チーム</p>
-          <h1 className="todon-page-title">{team.name}</h1>
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-stone-200 bg-white text-2xl">
+              {teamDisplayIcon({ name: team.name, icon: teamIcon })}
+            </span>
+            <h1 className="todon-page-title">{team.name}</h1>
+          </div>
           <p className="mt-1 text-xs text-todon-ink-muted">
             あなたのロール: {team.myRole ? roleLabels[team.myRole] : '—'} / メンバー {team.memberCount ?? members.length} 人
           </p>
@@ -107,6 +155,30 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
 
       {message ? <p className="todon-link">{message}</p> : null}
       {error ? <p className="todon-error">{error}</p> : null}
+
+      {canAdmin ? (
+        <section className="todon-section space-y-3 p-4">
+          <h2 className="text-sm font-extrabold text-todon-ink">チームアイコン</h2>
+          <p className="text-xs text-todon-ink-muted">画面左の切り替えボタンに表示されます</p>
+          <div className="flex flex-wrap gap-2">
+            {TEAM_ICON_PRESETS.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                disabled={loading}
+                onClick={() => void onSaveIcon(preset)}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl border text-lg transition ${
+                  teamIcon === preset
+                    ? 'border-todon-primary bg-todon-primary-soft'
+                    : 'border-stone-200 bg-white hover:border-stone-300'
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="space-y-3 todon-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -149,7 +221,7 @@ export function TeamDetailClient({ team, members: initialMembers, tasks: initial
               key={member.id}
               className="flex flex-wrap items-center justify-between gap-2 todon-card px-3 py-2 text-sm"
             >
-              <span className="text-slate-100">{member.user?.name ?? member.user?.email ?? member.userId}</span>
+              <span className="text-todon-ink">{member.user?.name ?? member.user?.email ?? member.userId}</span>
               <span className="text-xs text-todon-ink-muted">{roleLabels[member.role]}</span>
             </li>
           ))}

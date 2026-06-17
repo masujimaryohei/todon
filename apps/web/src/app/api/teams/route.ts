@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       throw new BadRequestError('チーム名を確認してください');
     }
 
-    const team = await createTeam(userId, payload.data.name);
+    const team = await createTeam(userId, payload.data.name, payload.data.icon);
     return NextResponse.json(team, { status: 201 });
   } catch (error) {
     return handleApiError(error);

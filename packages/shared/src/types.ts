@@ -83,6 +83,7 @@ export type TeamRole = 'owner' | 'admin' | 'member';
 export type Team = {
   id: string;
   name: string;
+  icon?: string | null;
   ownerId: string;
   createdAt: string;
   updatedAt: string;

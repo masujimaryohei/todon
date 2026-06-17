@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 
 import { handleApiError } from '@/lib/api-utils';
 import { BadRequestError, requireUser } from '@/lib/http';
-import { createTeamSchema } from '@/lib/schemas';
-import { deleteTeam, getTeamForUser, updateTeamName } from '@/server/teams';
+import { updateTeamSchema } from '@/lib/schemas';
+import { deleteTeam, getTeamForUser, updateTeam } from '@/server/teams';
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -23,12 +23,12 @@ export async function PATCH(req: Request, ctx: Ctx) {
     const { userId } = await requireUser(req);
     const { id } = await ctx.params;
     const body = await req.json();
-    const payload = createTeamSchema.safeParse(body);
+    const payload = updateTeamSchema.safeParse(body);
     if (!payload.success) {
-      throw new BadRequestError('チーム名を確認してください');
+      throw new BadRequestError('更新内容を確認してください');
     }
 
-    const team = await updateTeamName(userId, id, payload.data.name);
+    const team = await updateTeam(userId, id, payload.data);
     return NextResponse.json(team);
   } catch (error) {
     return handleApiError(error);

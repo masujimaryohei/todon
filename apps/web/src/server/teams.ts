@@ -14,6 +14,7 @@ function mapTeam(row: PrismaTeam & { _count?: { members: number }; members?: { r
   return {
     id: row.id,
     name: row.name,
+    icon: row.icon,
     ownerId: row.ownerId,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
@@ -82,16 +83,19 @@ export async function getTeamForUser(userId: string, teamId: string) {
   return mapTeam(team);
 }
 
-export async function createTeam(userId: string, name: string) {
+export async function createTeam(userId: string, name: string, icon?: string | null) {
   const trimmed = name.trim();
   if (!trimmed) {
     throw new BadRequestError('チーム名を入力してください');
   }
 
+  const iconValue = icon?.trim() || null;
+
   const team = await prisma.$transaction(async (tx) => {
     const created = await tx.team.create({
       data: {
         name: trimmed,
+        icon: iconValue,
         ownerId: userId,
       },
     });
@@ -110,17 +114,32 @@ export async function createTeam(userId: string, name: string) {
   return mapTeam({ ...team, _count: { members: 1 }, members: [{ role: 'owner' }] });
 }
 
-export async function updateTeamName(userId: string, teamId: string, name: string) {
+export async function updateTeam(
+  userId: string,
+  teamId: string,
+  patch: { name?: string; icon?: string | null },
+) {
   await requireTeamAdmin(userId, teamId);
 
-  const trimmed = name.trim();
-  if (!trimmed) {
-    throw new BadRequestError('チーム名を入力してください');
+  const data: { name?: string; icon?: string | null; updatedAt: Date } = {
+    updatedAt: new Date(),
+  };
+
+  if (patch.name !== undefined) {
+    const trimmed = patch.name.trim();
+    if (!trimmed) {
+      throw new BadRequestError('チーム名を入力してください');
+    }
+    data.name = trimmed;
+  }
+
+  if (patch.icon !== undefined) {
+    data.icon = patch.icon?.trim() || null;
   }
 
   const team = await prisma.team.update({
     where: { id: teamId },
-    data: { name: trimmed, updatedAt: new Date() },
+    data,
     include: {
       _count: { select: { members: true } },
       members: { where: { userId }, select: { role: true } },
@@ -128,6 +147,11 @@ export async function updateTeamName(userId: string, teamId: string, name: strin
   });
 
   return mapTeam(team);
+}
+
+/** @deprecated use updateTeam */
+export async function updateTeamName(userId: string, teamId: string, name: string) {
+  return updateTeam(userId, teamId, { name });
 }
 
 export async function deleteTeam(userId: string, teamId: string) {

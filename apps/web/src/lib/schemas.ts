@@ -100,7 +100,17 @@ export const updateSubtaskSchema = z.object({
 
 export const createTeamSchema = z.object({
   name: z.string().min(1).max(64),
+  icon: z.string().min(1).max(8).optional().nullable(),
 });
+
+export const updateTeamSchema = z
+  .object({
+    name: z.string().min(1).max(64).optional(),
+    icon: z.string().min(1).max(8).optional().nullable(),
+  })
+  .refine((data) => data.name !== undefined || data.icon !== undefined, {
+    message: '更新する項目を指定してください',
+  });
 
 export const inviteMemberSchema = z.object({
   email: z.string().email(),
